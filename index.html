@@ -478,6 +478,56 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .wp-company{background:rgba(91,110,245,.1);color:var(--p);border:1px solid rgba(91,110,245,.25)}
 .wp-personal{background:rgba(16,185,129,.1);color:#065f46;border:1px solid rgba(16,185,129,.3)}
 
+/* ══ DASHBOARD CHART TOKENS ══
+   Validated with the dataviz palette checker (ordinal ramps: monotone
+   lightness, >=0.06 adjacent dL, light end clears the surface, single hue).
+   Dark mode is its own set of steps, validated against #1a1d2e — not a flip. */
+:root{
+  /* Priority heat ramp — Low -> High = light -> dark */
+  --pri1:#F98A8A;--pri2:#EA4B4B;--pri3:#A81919;
+  /* Workflow pipeline ordinal ramp — To Do -> Done = light -> dark */
+  --pl1:#A8AEF9;--pl2:#8B93F7;--pl3:#6366F1;--pl4:#4F46E5;--pl5:#3F35C7;--pl6:#2E2A78;
+  --track:rgba(91,110,245,.13);
+}
+[data-theme="dark"]{
+  --pri1:#FECACA;--pri2:#F87171;--pri3:#DC2626;
+  --pl1:#DDE1FD;--pl2:#C0C6FB;--pl3:#A3AAF8;--pl4:#868FF5;--pl5:#6A6FF1;--pl6:#5B54E6;
+  --track:rgba(148,163,184,.18);
+}
+
+/* ── KPI stat tiles ── */
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px;margin-bottom:18px}
+.kpi-card{background:var(--surf);border:1px solid var(--bd);border-radius:var(--rx);padding:16px 17px;transition:var(--dur);position:relative}
+.kpi-card.tap{cursor:pointer}
+.kpi-card.tap:hover{border-color:var(--p);transform:translateY(-2px);box-shadow:var(--sh)}
+.kpi-hd{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.kpi-ic{font-size:.95rem;line-height:1}
+.kpi-lbl{font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.01em}
+.kpi-val{font-family:var(--ffb);font-size:2rem;font-weight:700;color:var(--text);line-height:1;letter-spacing:-.02em}
+.kpi-sub{font-size:.72rem;color:var(--lt);margin-top:5px;font-weight:500}
+.kpi-sub b{color:var(--muted);font-weight:700}
+.meter{margin-top:10px;height:6px;background:var(--track);border-radius:var(--rf);overflow:hidden}
+.meter-fill{height:100%;border-radius:var(--rf);background:var(--pl4);transition:width .5s ease}
+
+/* ── Horizontal bar chart (priority) ── */
+.hbar{display:flex;flex-direction:column;gap:11px}
+.hbar-row{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:11px}
+.hbar-lbl{display:flex;align-items:center;gap:6px;font-size:.76rem;font-weight:600;color:var(--muted)}
+.hbar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.hbar-track{display:block;height:14px;background:var(--track);border-radius:3px;overflow:hidden}
+.hbar-fill{display:block;height:100%;border-radius:0 4px 4px 0;transition:width .5s ease;min-width:2px}
+.hbar-val{font-size:.8rem;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;min-width:20px;text-align:right}
+
+/* ── Stacked pipeline bar ── */
+.pipe{display:flex;height:22px;border-radius:5px;overflow:hidden;background:var(--track);margin-bottom:14px}
+.pipe-seg{height:100%;border-right:2px solid var(--surf);transition:width .5s ease}
+.pipe-seg:last-child{border-right:none}
+.pipe-lg{display:flex;flex-wrap:wrap;gap:9px 15px}
+.pipe-key{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted);font-weight:500}
+.pipe-sw{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.pipe-key b{color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
+.chart-empty{padding:26px 0;text-align:center;color:var(--lt);font-size:.79rem}
+
 /* ── MOBILE NAV (hamburger + drawer) ── */
 .menu-btn{display:none;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:9px;color:#fff;font-size:1.15rem;line-height:1;cursor:pointer;padding:7px 10px;flex-shrink:0}
 .menu-btn:hover{background:rgba(255,255,255,.26)}
@@ -507,6 +557,14 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
   .ph{flex-direction:column;align-items:stretch}
   .ph-r{width:100%}
   .modal-box,.mdl,.mbx{max-width:100%!important}
+  /* Two-up KPI tiles beat one very tall column on a phone */
+  .kpi{grid-template-columns:1fr 1fr;gap:10px}
+  .kpi-card{padding:13px}
+  .kpi-val{font-size:1.55rem}
+  .kpi-lbl{font-size:.68rem}
+  .kpi-sub{font-size:.67rem}
+  .hbar-row{grid-template-columns:58px 1fr auto;gap:8px}
+  .uprow{flex-direction:column;align-items:flex-start;gap:7px}
 }
 </style>
 </head>
@@ -675,21 +733,38 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
         </div>
         <div class="btn bo bsm">Open My Day →</div>
       </div>
-      <div class="mrow">
-        <div class="mcd mc1"><div class="mic">📊</div><div class="mv" id="st-total">0</div><div class="ml">Total Tasks</div></div>
-        <div class="mcd mc2">
-          <div class="mic">✅</div><div class="mv" id="st-done">0</div><div class="ml">Completed</div>
-          <div class="mpb"><div class="mpbf" id="st-done-bar" style="width:0%;background:linear-gradient(90deg,#10B981,#06B6D4)"></div></div>
+      <div class="kpi">
+        <div class="kpi-card tap" onclick="showPage('tasks')">
+          <div class="kpi-hd"><span class="kpi-ic">📋</span><span class="kpi-lbl">Total tasks</span></div>
+          <div class="kpi-val" id="st-total">0</div>
+          <div class="kpi-sub" id="st-total-sub">Nothing yet</div>
         </div>
-        <div class="mcd mc3"><div class="mic">⚠️</div><div class="mv" id="st-ovr">0</div><div class="ml">Overdue</div></div>
-        <div class="mcd mc4">
-          <div class="mic">📈</div><div class="mv" id="st-prog">0%</div><div class="ml">Global Progress</div>
-          <div class="mpb"><div class="mpbf" id="st-prog-bar" style="width:0%;background:linear-gradient(90deg,#F59E0B,#EAB308)"></div></div>
+        <div class="kpi-card">
+          <div class="kpi-hd"><span class="kpi-ic">✅</span><span class="kpi-lbl">Completed</span></div>
+          <div class="kpi-val" id="st-done">0</div>
+          <div class="kpi-sub" id="st-done-sub"><b>0%</b> of all tasks</div>
+          <div class="meter"><div class="meter-fill" id="st-done-bar" style="width:0%"></div></div>
+        </div>
+        <div class="kpi-card tap" onclick="showPage('mytasks')">
+          <div class="kpi-hd"><span class="kpi-ic">⚠️</span><span class="kpi-lbl">Overdue</span></div>
+          <div class="kpi-val" id="st-ovr">0</div>
+          <div class="kpi-sub" id="st-ovr-sub">All on schedule</div>
+        </div>
+        <div class="kpi-card tap" onclick="showPage('calendar')">
+          <div class="kpi-hd"><span class="kpi-ic">🗓️</span><span class="kpi-lbl">Due this week</span></div>
+          <div class="kpi-val" id="st-week">0</div>
+          <div class="kpi-sub" id="st-week-sub">Next 7 days</div>
         </div>
       </div>
       <div class="crow">
-        <div class="ccd"><div class="ct">📊 Priority Distribution</div><div class="cw"><canvas id="priChart"></canvas></div></div>
-        <div class="ccd"><div class="ct">🍩 Status Breakdown</div><div class="cw"><canvas id="stChart"></canvas></div></div>
+        <div class="ccd">
+          <div class="ct">📊 Priority Distribution</div>
+          <div id="pri-chart" class="hbar"></div>
+        </div>
+        <div class="ccd">
+          <div class="ct">🔄 Workflow Pipeline</div>
+          <div id="pipe-chart"></div>
+        </div>
       </div>
       <div class="ccd" style="margin-bottom:20px">
         <div class="ct" style="margin-bottom:12px">🔥 Upcoming Tasks</div>
@@ -1404,7 +1479,6 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <!-- Firebase SDK (compat v9) — loaded only when config is saved -->
 <script>
@@ -1484,8 +1558,6 @@ let currentView = 'list';
 let editingId   = null;
 let calMonth    = new Date().getMonth();
 let calYear     = new Date().getFullYear();
-let priChartInst = null;
-let stChartInst  = null;
 let quillInst    = null;
 let quillNotes   = '';
 let searchTerm   = '';
@@ -1551,6 +1623,19 @@ function todayStr(){ return new Date().toISOString().split('T')[0]; }
 function fmtDate(s){ return s ? s.split('T')[0].split('-').reverse().join('/') : ''; }
 // Extract YYYY-MM-DD from either "YYYY-MM-DD" or "YYYY-MM-DDTHH:mm" (datetime-local)
 function deadlineDate(s){ return s ? s.split('T')[0] : ''; }
+/* Human-readable distance from today, e.g. "Today", "in 3 days", "2 days ago". */
+function relDue(dateStr, todayStr_){
+  if(!dateStr) return '';
+  const a = new Date(dateStr + 'T00:00:00');
+  const b = new Date((todayStr_ || todayStr()) + 'T00:00:00');
+  const days = Math.round((a - b) / 864e5);
+  if(days === 0)  return 'Today';
+  if(days === 1)  return 'Tomorrow';
+  if(days === -1) return 'Yesterday';
+  if(days > 0)    return days < 7 ? `in ${days} days` : `in ${Math.round(days/7)} wk`;
+  const ago = Math.abs(days);
+  return ago < 7 ? `${ago} days ago` : `${Math.round(ago/7)} wk ago`;
+}
 // Human-readable datetime — shows time only when a time component is present
 function fmtDateTime(s){
   if(!s) return '';
@@ -1751,34 +1836,74 @@ function renderDashboard(){
     tss.textContent = parts.length ? parts.join(' · ') : '🎉 You have a clear runway today.';
   }
 
-  document.getElementById('st-total').textContent = total;
-  document.getElementById('st-done').textContent  = done;
-  document.getElementById('st-ovr').textContent   = overdue;
-  document.getElementById('st-prog').textContent  = prog+'%';
-  document.getElementById('st-done-bar').style.width = prog+'%';
-  document.getElementById('st-prog-bar').style.width = prog+'%';
+  // ── KPI tiles ──
+  const active   = total - done;
+  const weekEnd  = new Date(); weekEnd.setDate(weekEnd.getDate() + 7);
+  const weekEndS = weekEnd.toISOString().split('T')[0];
+  const dueWeek  = D.tasks.filter(t => t.status !== 'done' && t.deadline &&
+                     deadlineDate(t.deadline) >= today && deadlineDate(t.deadline) <= weekEndS).length;
 
-  // Charts
+  const setTxt = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  const setHtml = (id, v) => { const e = document.getElementById(id); if(e) e.innerHTML = v; };
+
+  setTxt('st-total', total);
+  setHtml('st-total-sub', total ? `<b>${active}</b> still open` : 'Nothing yet');
+  setTxt('st-done', done);
+  setHtml('st-done-sub', `<b>${prog}%</b> of all tasks`);
+  const dbar = document.getElementById('st-done-bar');
+  if(dbar) dbar.style.width = prog + '%';
+  setTxt('st-ovr', overdue);
+  setHtml('st-ovr-sub', overdue ? 'Needs attention' : 'All on schedule');
+  setTxt('st-week', dueWeek);
+  setHtml('st-week-sub', dueToday ? `<b>${dueToday}</b> due today` : 'Next 7 days');
+
+  // ── Priority distribution (horizontal bars, ordinal heat ramp) ──
   const pc = {high:0,medium:0,low:0};
-  const sc = {todo:0,in_progress:0,review:0,done:0};
-  D.tasks.forEach(t => { if(pc[t.priority]!==undefined) pc[t.priority]++; if(sc[t.status]!==undefined) sc[t.status]++; });
+  D.tasks.forEach(t => { if(pc[t.priority]!==undefined) pc[t.priority]++; });
+  const priRows = [
+    {k:'high',   label:'High',   color:'var(--pri3)'},
+    {k:'medium', label:'Medium', color:'var(--pri2)'},
+    {k:'low',    label:'Low',    color:'var(--pri1)'}
+  ];
+  const priMax = Math.max(1, ...priRows.map(r => pc[r.k]));
+  const priEl  = document.getElementById('pri-chart');
+  if(priEl){
+    priEl.innerHTML = !total
+      ? '<div class="chart-empty">No tasks yet — add one to see the breakdown.</div>'
+      : priRows.map(r => {
+          const n = pc[r.k];
+          return `<div class="hbar-row">
+            <span class="hbar-lbl"><span class="hbar-dot" style="background:${r.color}"></span>${r.label}</span>
+            <span class="hbar-track"><span class="hbar-fill" style="width:${(n/priMax)*100}%;background:${r.color}"></span></span>
+            <span class="hbar-val">${n}</span>
+          </div>`;
+        }).join('');
+  }
 
-  const chartReady = (typeof Chart !== 'undefined');
-  if(priChartInst){ priChartInst.destroy(); priChartInst = null; }
-  const pc1 = document.getElementById('priChart');
-  if(pc1 && chartReady) priChartInst = new Chart(pc1, {
-    type:'bar',
-    data:{ labels:['🔴 High','🟡 Medium','🟢 Low'], datasets:[{data:[pc.high,pc.medium,pc.low],backgroundColor:['#EF4444','#F59E0B','#10B981'],borderRadius:8,borderSkipped:false,borderWidth:0}] },
-    options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,color:'#9CA3AF'},grid:{color:'rgba(0,0,0,0.04)'}},x:{grid:{display:false},ticks:{color:'#9CA3AF'}}} }
-  });
-
-  if(stChartInst){ stChartInst.destroy(); stChartInst = null; }
-  const pc2 = document.getElementById('stChart');
-  if(pc2 && chartReady) stChartInst = new Chart(pc2, {
-    type:'doughnut',
-    data:{ labels:['To Do','In Progress','In Review','Done'], datasets:[{data:[sc.todo,sc.in_progress,sc.review,sc.done],backgroundColor:['#9CA3AF','#3B82F6','#F59E0B','#10B981'],borderColor:'transparent',borderWidth:4,hoverOffset:6}] },
-    options:{ responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'right',labels:{color:'#6B7280',font:{family:'Inter',size:11},padding:12,usePointStyle:true,pointStyleWidth:8}}} }
-  });
+  // ── Workflow pipeline (stacked bar + legend) ──
+  // Covers every status in S_CFG, so assigned/accepted tasks are no longer
+  // silently dropped from the chart the way the old 4-slice donut dropped them.
+  const pipeOrder = ['todo','assigned','accepted','in_progress','review','done'];
+  const pipeVars  = ['--pl1','--pl2','--pl3','--pl4','--pl5','--pl6'];
+  const counts    = {};
+  pipeOrder.forEach(s => counts[s] = 0);
+  D.tasks.forEach(t => { if(counts[t.status] !== undefined) counts[t.status]++; });
+  const pipeTotal = pipeOrder.reduce((a,s) => a + counts[s], 0);
+  const pipeEl = document.getElementById('pipe-chart');
+  if(pipeEl){
+    if(!pipeTotal){
+      pipeEl.innerHTML = '<div class="chart-empty">No tasks yet — your workflow will appear here.</div>';
+    } else {
+      const segs = pipeOrder.filter(s => counts[s] > 0).map(s => {
+        const i = pipeOrder.indexOf(s);
+        return `<span class="pipe-seg" style="width:${(counts[s]/pipeTotal)*100}%;background:var(${pipeVars[i]})" title="${esc(S_CFG[s].label)}: ${counts[s]}"></span>`;
+      }).join('');
+      const keys = pipeOrder.map((s,i) =>
+        `<span class="pipe-key"><span class="pipe-sw" style="background:var(${pipeVars[i]})"></span>${esc(S_CFG[s].label)} <b>${counts[s]}</b></span>`
+      ).join('');
+      pipeEl.innerHTML = `<div class="pipe">${segs}</div><div class="pipe-lg">${keys}</div>`;
+    }
+  }
 
   // Upcoming
   const upcoming = [...D.tasks].filter(t => t.status !== 'done')
@@ -1793,14 +1918,15 @@ function renderDashboard(){
       const sc = S_CFG[t.status]||S_CFG.todo;
       const proj = D.projects.find(p => p.id == t.projectId);
       const ovr  = t.deadline && deadlineDate(t.deadline) < today;
-      return `<div class="uprow">
-        <div style="display:flex;align-items:center;gap:9px">
+      const meta = [pc.label + ' priority', proj ? '📁 ' + proj.title : null].filter(Boolean).join(' · ');
+      return `<div class="uprow" onclick="viewNotes(${t.id})" style="cursor:pointer">
+        <div style="display:flex;align-items:center;gap:9px;min-width:0">
           <div style="width:7px;height:7px;border-radius:50%;background:${pc.dot};flex-shrink:0"></div>
-          <div><div class="uptit">${esc(t.title)}</div>${proj?`<div class="upsub">📁 ${esc(proj.title)}</div>`:''}</div>
+          <div style="min-width:0"><div class="uptit">${esc(t.title)}</div><div class="upsub">${esc(meta)}</div></div>
         </div>
         <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
           <span class="bdg ${sc.cls}">${sc.label}</span>
-          ${t.deadline?`<span class="bdg ${ovr?'bh':'btd'}">${ovr?'⚠️ ':''}${fmtDateTime(t.deadline)}</span>`:''}
+          ${t.deadline?`<span class="bdg ${ovr?'bh':'btd'}" title="${esc(fmtDateTime(t.deadline))}">${ovr?'⚠️ ':''}${esc(relDue(deadlineDate(t.deadline), today))}</span>`:''}
         </div>
       </div>`;
     }).join('');
@@ -4606,16 +4732,6 @@ window.addEventListener('load', () => {
   safe(renderProfilePage,   'renderProfilePage');
   safe(initNotifications,   'initNotifications');
   safe(fbInit,              'fbInit'); // login gate handles all onboarding
-
-  // If Chart.js loaded slowly (or was briefly blocked), draw the dashboard
-  // charts as soon as it becomes available — without blocking anything else.
-  if(typeof Chart === 'undefined'){
-    let tries = 0;
-    const t = setInterval(() => {
-      if(typeof Chart !== 'undefined'){ clearInterval(t); safe(renderDashboard, 'renderDashboard(late)'); }
-      else if(++tries > 40) clearInterval(t);
-    }, 250);
-  }
 
   // Register the service worker for offline support / installability.
   if('serviceWorker' in navigator){
