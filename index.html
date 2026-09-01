@@ -17,37 +17,40 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --p:#5B6EF5;--p2:#7C3AED;
-  --pg:linear-gradient(135deg,#5B6EF5 0%,#7C3AED 100%);
-  --ok:#10B981;--warn:#F59E0B;--err:#EF4444;--info:#3B82F6;
-  --bg:#EEF2FF;--surf:#FFFFFF;--surf2:#F5F7FF;
-  --bd:rgba(91,110,245,0.15);
-  --text:#1a1f36;--muted:#6B7280;--lt:#9CA3AF;
-  --ffd:'Poppins',sans-serif;--ffb:'Inter',sans-serif;
-  --r:10px;--rl:14px;--rx:18px;--r2x:22px;--rf:9999px;
-  --sh:0 4px 18px rgba(91,110,245,0.13);
-  --shl:0 8px 32px rgba(91,110,245,0.22);
-  --hw:64px;--sw:248px;
-  --dur:200ms;
+  --p:#4F46E5;--p2:#4338CA;--ptint:#EEF0FE;
+  --pg:#4F46E5;
+  --ok:#047857;--warn:#B45309;--err:#DC2626;--info:#1D4ED8;
+  --bg:#F7F8FA;--surf:#FFFFFF;--surf2:#F4F5F7;
+  --bd:#E4E6EB;
+  --text:#15181D;--muted:#5A616E;--lt:#8B92A0;
+  --ffd:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --ffb:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --r:6px;--rl:8px;--rx:10px;--r2x:12px;--rf:9999px;
+  --sh:0 1px 2px rgba(16,24,40,.06);
+  --shl:0 4px 14px rgba(16,24,40,.10);
+  --hw:56px;--sw:236px;
+  --dur:150ms;
 }
 body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:100vh}
 ::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-thumb{background:rgba(91,110,245,.25);border-radius:99px}
+::-webkit-scrollbar-thumb{background:rgba(100,110,130,.28);border-radius:99px}
+.i{width:1.05em;height:1.05em;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 
 /* ── HEADER ── */
-.hdr{position:fixed;top:0;left:0;right:0;height:var(--hw);background:var(--pg);display:flex;align-items:center;padding:0 22px;z-index:1000;box-shadow:0 4px 22px rgba(91,110,245,.45);gap:16px}
+.hdr{position:fixed;top:0;left:0;right:0;height:var(--hw);background:var(--surf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 18px;z-index:1000;gap:14px}
 .logo{display:flex;align-items:center;gap:9px;white-space:nowrap}
-.logo-ic{width:33px;height:33px;border-radius:9px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
-.logo-tx{font-family:var(--ffd);font-weight:800;font-size:1.02rem;color:#fff;letter-spacing:-.01em}
-.srch{flex:1;max-width:340px;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:var(--rf);padding:7px 14px;transition:var(--dur)}
-.srch:focus-within{background:rgba(255,255,255,.24);border-color:rgba(255,255,255,.5)}
-.srch input{background:none;border:none;color:#fff;outline:none;font-family:var(--ffb);font-size:.84rem;width:100%}
-.srch input::placeholder{color:rgba(255,255,255,.6)}
+.logo-ic{width:28px;height:28px;border-radius:7px;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-ic .i{width:16px;height:16px}
+.logo-tx{font-family:var(--ffd);font-weight:650;font-size:.94rem;color:var(--text);letter-spacing:-.01em}
+.srch{flex:1;max-width:320px;display:flex;align-items:center;gap:7px;background:var(--surf2);border:1px solid var(--bd);border-radius:var(--r);padding:6px 11px;transition:var(--dur);color:var(--lt)}
+.srch:focus-within{background:var(--surf);border-color:var(--p);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.srch input{background:none;border:none;color:var(--text);outline:none;font-family:var(--ffb);font-size:.82rem;width:100%}
+.srch input::placeholder{color:var(--lt)}
 .hdr-r{display:flex;align-items:center;gap:9px;margin-left:auto}
-.sv-badge{display:flex;align-items:center;gap:5px;padding:4px 11px;border-radius:var(--rf);background:rgba(16,185,129,.2);color:#6EE7B7;font-size:.71rem;font-weight:700;border:1px solid rgba(16,185,129,.35)}
-.avbtn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:var(--rf);padding:5px 13px 5px 5px;cursor:pointer;color:#fff;font-family:var(--ffb);font-size:.81rem;font-weight:600;transition:var(--dur)}
-.avbtn:hover{background:rgba(255,255,255,.26)}
-.av{width:27px;height:27px;border-radius:50%;background:linear-gradient(135deg,#f093fb,#f5576c);display:flex;align-items:center;justify-content:center;font-size:.67rem;font-weight:800;color:#fff;flex-shrink:0}
+.sv-badge{display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--r);background:var(--surf2);color:var(--muted);font-size:.7rem;font-weight:600;border:1px solid var(--bd)}
+.avbtn{display:flex;align-items:center;gap:7px;background:none;border:1px solid var(--bd);border-radius:var(--r);padding:4px 10px 4px 4px;cursor:pointer;color:var(--text);font-family:var(--ffb);font-size:.8rem;font-weight:500;transition:var(--dur)}
+.avbtn:hover{background:var(--surf2)}
+.av{width:25px;height:25px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:.64rem;font-weight:600;color:#fff;flex-shrink:0}
 
 /* ── LAYOUT ── */
 .layout{display:flex;margin-top:var(--hw)}
@@ -55,10 +58,12 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .sdb-lbl{font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lt);padding:0 10px;margin:13px 0 5px}
 .nbtn{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:var(--r);margin-bottom:3px;cursor:pointer;color:var(--muted);font-family:var(--ffb);font-size:.84rem;font-weight:500;border:none;background:none;width:100%;text-align:left;transition:var(--dur)}
 .nbtn:hover{background:var(--surf2);color:var(--text)}
-.nbtn.act{background:var(--pg);color:#fff;box-shadow:0 4px 14px rgba(91,110,245,.38)}
-.nic{font-size:.98rem;flex-shrink:0}
-.qadd{margin:15px 9px 0;padding:11px;background:linear-gradient(135deg,rgba(91,110,245,.07),rgba(124,58,237,.07));border:1.5px dashed rgba(91,110,245,.32);border-radius:var(--rl);cursor:pointer;color:var(--p);font-family:var(--ffb);font-size:.81rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px;transition:var(--dur)}
-.qadd:hover{background:linear-gradient(135deg,rgba(91,110,245,.14),rgba(124,58,237,.14))}
+.nbtn.act{background:var(--ptint);color:var(--p);font-weight:600}
+.nbtn.act .i{stroke-width:2.1}
+.nic{width:17px;height:17px;flex-shrink:0;color:var(--lt)}
+.nbtn.act .nic,.nbtn:hover .nic{color:currentColor}
+.qadd{margin:14px 9px 0;padding:9px;background:var(--surf2);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;color:var(--text);font-family:var(--ffb);font-size:.8rem;font-weight:550;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--dur)}
+.qadd:hover{background:var(--ptint);border-color:var(--p);color:var(--p)}
 
 .main{margin-left:var(--sw);flex:1;padding:25px 28px;min-height:calc(100vh - var(--hw))}
 @keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -66,16 +71,16 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 
 /* ── PAGE HEADER ── */
 .ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;gap:12px;flex-wrap:wrap}
-.ph-t{font-family:var(--ffd);font-size:1.5rem;font-weight:800;color:var(--text)}
+.ph-t{font-family:var(--ffd);font-size:1.32rem;font-weight:600;color:var(--text);letter-spacing:-.02em}
 .ph-s{font-size:.79rem;color:var(--muted);margin-top:2px}
 .ph-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 
 /* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 17px;border-radius:var(--r);font-family:var(--ffb);font-size:.83rem;font-weight:700;cursor:pointer;border:none;white-space:nowrap;transition:var(--dur);line-height:1.2;vertical-align:middle}
-.bp{background:var(--pg);color:#fff;box-shadow:0 4px 14px rgba(91,110,245,.34)}
-.bp:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(91,110,245,.5)}
-.bo{background:#fff;color:var(--text);border:1.5px solid var(--bd)}
-.bo:hover{background:var(--surf2);border-color:var(--p);color:var(--p)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r);font-family:var(--ffb);font-size:.81rem;font-weight:550;cursor:pointer;border:1px solid transparent;white-space:nowrap;transition:var(--dur);line-height:1.2;vertical-align:middle}
+.bp{background:var(--p);color:#fff}
+.bp:hover{background:var(--p2)}
+.bo{background:var(--surf);color:var(--text);border:1px solid var(--bd)}
+.bo:hover{background:var(--surf2)}
 .bdr{background:#fff;color:var(--err);border:1.5px solid #FECACA}
 .bdr:hover{background:#FEF2F2}
 .bsm{padding:6px 11px!important;font-size:.77rem!important;border-radius:8px!important}
@@ -99,7 +104,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 /* ── CHARTS ── */
 .crow{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-bottom:20px}
 .ccd{background:var(--surf);border-radius:var(--rx);border:1px solid var(--bd);padding:20px;box-shadow:0 1px 4px rgba(91,110,245,.06)}
-.ct{font-family:var(--ffd);font-size:.89rem;font-weight:700;color:var(--text);margin-bottom:13px;display:flex;align-items:center;gap:6px}
+.ct{font-family:var(--ffd);font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:7px;letter-spacing:-.01em}
 .cw{position:relative;height:220px}
 
 /* ── FORM ── */
@@ -111,7 +116,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .fr>.fg{flex:1}
 
 /* ── BADGES ── */
-.bdg{display:inline-flex;align-items:center;gap:2px;padding:3px 8px;border-radius:var(--rf);font-size:.69rem;font-weight:800;letter-spacing:.01em}
+.bdg{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:.7rem;font-weight:550;letter-spacing:0}
 .bh{background:#FEF2F2;color:#EF4444}.bm{background:#FFFBEB;color:#D97706}.bl{background:#F0FDF4;color:#059669}
 .btd{background:#F9FAFB;color:#6B7280;border:1px solid #E5E7EB}
 .bip{background:#EFF6FF;color:#2563EB}.brv{background:#FFFBEB;color:#D97706}.bdn{background:#ECFDF5;color:#059669}
@@ -121,7 +126,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .tgrd{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:12px}
 .tcd{background:var(--surf);border-radius:var(--rl);border:1px solid var(--bd);overflow:hidden;transition:var(--dur);display:flex;flex-direction:column}
 .tcd:hover{transform:translateY(-2px);box-shadow:var(--sh)}
-.tbar{height:4px}
+.tbar{height:2px}
 .tin{padding:14px 16px}
 .ttop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:7px}
 .tnm{font-family:var(--ffd);font-size:.86rem;font-weight:700;color:var(--text);flex:1;line-height:1.35}
@@ -227,9 +232,9 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .upsub{font-size:.69rem;color:var(--muted);margin-top:1px}
 
 /* ── PROFILE ── */
-.prof-hero{background:var(--pg);border-radius:var(--rx);padding:32px 28px 24px;margin-bottom:20px;position:relative;overflow:hidden}
-.prof-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.07)}
-.prof-hero::after{content:'';position:absolute;bottom:-30px;left:60px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)}
+.prof-hero{background:#1F2430;border-radius:var(--rx);padding:26px 24px;margin-bottom:18px;position:relative;overflow:hidden}
+
+
 .prof-hero-inner{display:flex;align-items:center;gap:22px;position:relative;z-index:1}
 .prof-av-wrap{position:relative;flex-shrink:0}
 .prof-av{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--ffd);font-size:1.8rem;font-weight:800;color:#fff;border:3px solid rgba(255,255,255,.35);box-shadow:0 4px 16px rgba(0,0,0,.2);cursor:pointer;transition:var(--dur);flex-shrink:0}
@@ -292,7 +297,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 
 /* ── NEW: SECTION GROUP HEADER (Asana-style) ── */
 .sec{margin-bottom:18px}
-.sec-h{display:flex;align-items:center;gap:8px;padding:8px 4px;cursor:pointer;user-select:none;font-family:var(--ffd);font-size:.86rem;font-weight:700;color:var(--text);border-bottom:1px solid var(--bd);margin-bottom:9px}
+.sec-h{display:flex;align-items:center;gap:8px;padding:8px 4px;cursor:pointer;user-select:none;font-family:var(--ffd);font-size:.82rem;font-weight:600;color:var(--text);border-bottom:1px solid var(--bd);margin-bottom:9px}
 .sec-h .sec-caret{font-size:.7rem;color:var(--lt);transition:transform .2s}
 .sec.col .sec-caret{transform:rotate(-90deg)}
 .sec.col .sec-body{display:none}
@@ -326,9 +331,9 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .shake{animation:shake .3s ease}
 
 /* ── NEW: FLOATING ACTION BUTTON ── */
-.fab{position:fixed;bottom:28px;right:28px;width:56px;height:56px;border-radius:50%;background:var(--pg);color:#fff;border:none;font-size:1.7rem;font-weight:300;cursor:pointer;box-shadow:0 8px 24px rgba(91,110,245,.45);z-index:900;display:flex;align-items:center;justify-content:center;transition:var(--dur)}
-.fab:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 12px 32px rgba(91,110,245,.6)}
-.fab:active{transform:scale(.95)}
+.fab{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:var(--rx);background:var(--p);color:#fff;border:none;font-size:1.3rem;font-weight:300;cursor:pointer;box-shadow:var(--shl);z-index:900;display:flex;align-items:center;justify-content:center;transition:var(--dur)}
+.fab:hover{background:var(--p2)}
+.fab:active{opacity:.9}
 
 /* ── POLISH: smoother task cards & meta ── */
 .tlist{display:flex;flex-direction:column;gap:10px}
@@ -345,10 +350,10 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .tic-grp .bic:hover{opacity:1}
 
 /* ── POLISH: today badge on dashboard ── */
-.today-snap{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(91,110,245,.08),rgba(124,58,237,.08));border:1px solid rgba(91,110,245,.2);border-radius:var(--rl);padding:13px 16px;margin-bottom:18px}
-.today-snap-ic{font-size:1.6rem}
+.today-snap{display:flex;align-items:center;gap:13px;background:var(--surf);border:1px solid var(--bd);border-radius:var(--rx);padding:13px 16px;margin-bottom:18px}
+.today-snap-ic{width:20px;height:20px;color:var(--muted)}
 .today-snap-tx{flex:1}
-.today-snap-d{font-family:var(--ffd);font-weight:800;font-size:.92rem;color:var(--text)}
+.today-snap-d{font-family:var(--ffd);font-weight:600;font-size:.88rem;color:var(--text)}
 .today-snap-s{font-size:.78rem;color:var(--muted);margin-top:2px}
 
 /* ── POLISH: section headers feel like Asana ── */
@@ -360,9 +365,9 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 
 /* ── DARK MODE ── */
 [data-theme="dark"]{
-  --bg:#0f1117;--surf:#1a1d2e;--surf2:#23263a;
-  --bd:rgba(91,110,245,0.22);
-  --text:#e2e8f0;--muted:#94a3b8;--lt:#64748b;
+  --bg:#0D0F13;--surf:#16191F;--surf2:#1E222A;--ptint:#242A45;
+  --bd:#282D36;
+  --text:#E7E9ED;--muted:#98A0AE;--lt:#6C7482;
 }
 [data-theme="dark"] .hdr{box-shadow:0 4px 22px rgba(0,0,0,.6)}
 [data-theme="dark"] .mbox{background:#1a1d2e}
@@ -373,8 +378,8 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 [data-theme="dark"] .calday{background:#1a1d2e;border-color:rgba(91,110,245,.18)}
 [data-theme="dark"] .caldh{background:#23263a}
 [data-theme="dark"] .tw{color:#fff}
-.dm-btn{background:none;border:1.5px solid rgba(255,255,255,.3);border-radius:var(--rf);padding:5px 10px;cursor:pointer;color:#fff;font-size:.85rem;transition:var(--dur)}
-.dm-btn:hover{background:rgba(255,255,255,.15)}
+.dm-btn{background:none;border:1px solid var(--bd);border-radius:var(--r);padding:6px 8px;cursor:pointer;color:var(--muted);display:inline-flex;align-items:center;transition:var(--dur)}
+.dm-btn:hover{background:var(--surf2);color:var(--text)}
 
 /* ── TAGS ── */
 .tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:var(--rf);font-size:.66rem;font-weight:700;background:rgba(91,110,245,.12);color:var(--p);border:1px solid rgba(91,110,245,.25);cursor:pointer}
@@ -401,8 +406,8 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .load-lo{background:#10B981}.load-md{background:#F59E0B}.load-hi{background:#EF4444}
 
 /* ── NOTIFICATION BELL ── */
-.notif-btn{position:relative;background:none;border:1.5px solid rgba(255,255,255,.3);border-radius:var(--rf);padding:5px 10px;cursor:pointer;color:#fff;font-size:.85rem;transition:var(--dur)}
-.notif-btn:hover{background:rgba(255,255,255,.15)}
+.notif-btn{position:relative;background:none;border:1px solid var(--bd);border-radius:var(--r);padding:6px 8px;cursor:pointer;color:var(--muted);display:inline-flex;align-items:center;transition:var(--dur)}
+.notif-btn:hover{background:var(--surf2);color:var(--text)}
 .notif-dot{position:absolute;top:2px;right:2px;width:7px;height:7px;background:#EF4444;border-radius:50%;border:1.5px solid transparent;display:none}
 .notif-dot.show{display:block}
 
@@ -537,8 +542,8 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .chart-empty{padding:26px 0;text-align:center;color:var(--lt);font-size:.79rem}
 
 /* ── MOBILE NAV (hamburger + drawer) ── */
-.menu-btn{display:none;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:9px;color:#fff;font-size:1.15rem;line-height:1;cursor:pointer;padding:7px 10px;flex-shrink:0}
-.menu-btn:hover{background:rgba(255,255,255,.26)}
+.menu-btn{display:none;background:none;border:1px solid var(--bd);border-radius:var(--r);color:var(--text);font-size:1.05rem;line-height:1;cursor:pointer;padding:6px 9px;flex-shrink:0}
+.menu-btn:hover{background:var(--surf2)}
 .sdb-backdrop{display:none;position:fixed;inset:var(--hw) 0 0 0;background:rgba(15,20,40,.45);z-index:99;opacity:0;transition:opacity var(--dur)}
 .sdb-backdrop.show{display:block;opacity:1}
 
@@ -577,6 +582,32 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.2 12 3l9 7.2V20a1 1 0 0 1-1 1h-5v-6H10v6H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.4 5.9.9-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.9z"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21v-6"/><path d="M9 3h6l-1 5 3 3.2V15H7v-3.8L10 8z"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8.5a6 6 0 1 0-12 0c0 5.5-2 6.5-2 6.5h16s-2-1-2-6.5"/><path d="M10.3 19a2 2 0 0 0 3.4 0"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c0-3.7 3.4-5.6 7.5-5.6s7.5 1.9 7.5 5.6"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.4"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M8.5 6H21M8.5 12H21M8.5 18H21M3.6 6h.01M3.6 12h.01M3.6 18h.01"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.2" y="5" width="17.6" height="16" rx="2"/><path d="M3.2 10h17.6M8 3v4M16 3v4"/></symbol>
+<symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7.8" ry="3"/><path d="M4.2 6v12c0 1.7 3.5 3 7.8 3s7.8-1.3 7.8-3V6"/><path d="M4.2 12c0 1.7 3.5 3 7.8 3s7.8-1.3 7.8-3"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.2 19.5 6v6.2c0 4.7-3.2 7.9-7.5 9-4.3-1.1-7.5-4.3-7.5-9V6z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.6 21.5 20H2.5z"/><path d="M12 10v4M12 17h.01"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7v5.2l3.2 1.9"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.8"/><path d="m20 20-4.2-4.2"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 0 1 9.8 3.5a8.6 8.6 0 1 0 10.7 10.7"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="m3.5 17 5.5-5.5 3.5 3.5L20.5 7"/><path d="M15 7h5.5v5.5"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.2 2.8 5.5 14h5.6l-.8 7.2L18.5 10h-5.6z"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 7.5a2 2 0 0 1 2-2h3.4l2 2.4h7.6a2 2 0 0 1 2 2v8.6a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2.5 12h2M19.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 6.5 17.5 9.5"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5h5v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.4"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.4"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.4"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.4"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5.5 21V4"/><path d="M5.5 5h11l-2 3.6 2 3.6h-11"/></symbol>
+</defs></svg>
 
 <!-- ONBOARDING MODAL (legacy - kept as shell, hidden) -->
 <div id="onboarding-modal" style="display:none">
@@ -650,17 +681,17 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 <header class="hdr">
   <button class="menu-btn" id="menu-btn" onclick="toggleNav()" aria-label="Menu">☰</button>
   <div class="logo">
-    <div class="logo-ic">⚡</div>
+    <div class="logo-ic"><svg class="i" aria-hidden="true"><use href="#i-bolt"/></svg></div>
     <span class="logo-tx">Miyee<span style="opacity:.75;font-weight:500"> Task Manager</span> Pro</span>
   </div>
   <div class="srch">
-    <span style="opacity:.65;font-size:.9rem">🔍</span>
+    <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
     <input id="searchInput" placeholder="Search tasks…" autocomplete="off">
   </div>
   <div class="hdr-r">
     <div class="sv-badge">💾 Auto-Saved</div>
-    <button class="notif-btn" id="notif-btn" onclick="showNotifications()" title="Notifications"><span id="notif-dot" class="notif-dot"></span>🔔</button>
-    <button class="dm-btn" id="dm-btn" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</button>
+    <button class="notif-btn" id="notif-btn" onclick="showNotifications()" title="Notifications"><span id="notif-dot" class="notif-dot"></span><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg></button>
+    <button class="dm-btn" id="dm-btn" onclick="toggleDarkMode()" title="Toggle dark mode"><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg></button>
     <div class="avbtn" id="avbtn" onclick="toggleProfileDrop(event)">
       <div class="av" id="hdr-av" style="background:linear-gradient(135deg,#f093fb,#f5576c)">EX</div>
       <span id="hdr-name">Example</span>
@@ -681,7 +712,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
   <button class="prof-drop-item" onclick="showPage('profile');closeProfileDrop()">👤 View Profile</button>
   <button class="prof-drop-item" onclick="showPage('settings');closeProfileDrop()">⚙️ Data Management</button>
   <div class="prof-drop-sep"></div>
-  <button class="prof-drop-item danger" onclick="confirmAction('Wipe ALL data permanently?',resetData);closeProfileDrop()">🗑️ Factory Reset</button>
+  <button class="prof-drop-item danger" onclick="confirmAction('Wipe ALL data permanently?',resetData);closeProfileDrop()">Factory reset</button>
 </div>
 
 <!-- Mobile nav backdrop -->
@@ -693,17 +724,17 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
   <!-- SIDEBAR -->
   <aside class="sdb">
     <div class="sdb-lbl">Navigation</div>
-    <button class="nbtn act" data-page="dashboard"      onclick="showPage('dashboard')"><span class="nic">🏠</span>Dashboard</button>
-    <button class="nbtn"     data-page="myday"          onclick="showPage('myday')"><span class="nic">⭐</span>My Day</button>
-    <button class="nbtn"     data-page="mytasks"        onclick="showPage('mytasks')"><span class="nic">📌</span>My Tasks</button>
-    <button class="nbtn"     data-page="notifications"  onclick="showPage('notifications')" id="notif-nav-btn"><span class="nic">🔔</span>Notifications<span id="notif-count-badge" style="display:none;background:#EF4444;color:#fff;border-radius:99px;padding:0 6px;font-size:.67rem;font-weight:800;margin-left:4px">0</span></button>
-    <button class="nbtn"     data-page="profile"        onclick="showPage('profile')"><span class="nic">👤</span>My Profile</button>
-    <button class="nbtn"     data-page="visions"        onclick="showPage('visions')"><span class="nic">🎯</span>Goals & Projects</button>
-    <button class="nbtn"     data-page="tasks"          onclick="showPage('tasks')"><span class="nic">📋</span>Task Activity</button>
-    <button class="nbtn"     data-page="calendar"       onclick="showPage('calendar')"><span class="nic">📅</span>Due Date Calendar</button>
-    <button class="nbtn"     data-page="settings"       onclick="showPage('settings')"><span class="nic">⚙️</span>Data Management</button>
-    <button class="nbtn" id="admin-nav-btn" data-page="admin" onclick="showPage('admin')"><span class="nic">🛡️</span>Admin Console</button>
-    <div class="qadd" onclick="openTaskModal()">✨ Quick Add Task</div>
+    <button class="nbtn act" data-page="dashboard"      onclick="showPage('dashboard')"><svg class="i nic" aria-hidden="true"><use href="#i-home"/></svg>Dashboard</button>
+    <button class="nbtn"     data-page="myday"          onclick="showPage('myday')"><svg class="i nic" aria-hidden="true"><use href="#i-star"/></svg>My Day</button>
+    <button class="nbtn"     data-page="mytasks"        onclick="showPage('mytasks')"><svg class="i nic" aria-hidden="true"><use href="#i-pin"/></svg>My Tasks</button>
+    <button class="nbtn"     data-page="notifications"  onclick="showPage('notifications')" id="notif-nav-btn"><svg class="i nic" aria-hidden="true"><use href="#i-bell"/></svg>Notifications<span id="notif-count-badge" style="display:none;background:#EF4444;color:#fff;border-radius:99px;padding:0 6px;font-size:.67rem;font-weight:800;margin-left:4px">0</span></button>
+    <button class="nbtn"     data-page="profile"        onclick="showPage('profile')"><svg class="i nic" aria-hidden="true"><use href="#i-user"/></svg>My Profile</button>
+    <button class="nbtn"     data-page="visions"        onclick="showPage('visions')"><svg class="i nic" aria-hidden="true"><use href="#i-target"/></svg>Goals & Projects</button>
+    <button class="nbtn"     data-page="tasks"          onclick="showPage('tasks')"><svg class="i nic" aria-hidden="true"><use href="#i-list"/></svg>Task Activity</button>
+    <button class="nbtn"     data-page="calendar"       onclick="showPage('calendar')"><svg class="i nic" aria-hidden="true"><use href="#i-cal"/></svg>Due Date Calendar</button>
+    <button class="nbtn"     data-page="settings"       onclick="showPage('settings')"><svg class="i nic" aria-hidden="true"><use href="#i-db"/></svg>Data Management</button>
+    <button class="nbtn" id="admin-nav-btn" data-page="admin" onclick="showPage('admin')"><svg class="i nic" aria-hidden="true"><use href="#i-shield"/></svg>Admin Console</button>
+    <div class="qadd" onclick="openTaskModal()">Quick Add Task</div>
     <!-- User Switcher (Company Mode) -->
     <div class="user-switch-wrap" id="user-switch-wrap" style="display:none">
       <div class="user-switch-btn" onclick="toggleUserSwitcher()" id="usr-sw-btn">
@@ -715,7 +746,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     </div>
     <div style="padding:14px 10px 4px;margin-top:auto">
       <div style="font-size:.67rem;color:var(--lt);text-align:center;line-height:1.6">
-        ⚡ <strong style="color:var(--p)">Miyee</strong> Task Manager Pro<br>
+        <strong style="color:var(--p)">Miyee</strong> Task Manager Pro<br>
         <span style="font-size:.63rem">Built By Vipin Nair</span><br>
         <a href="mailto:audit.vipin@gmail.com" style="font-size:.61rem;color:var(--muted);text-decoration:none">audit.vipin@gmail.com</a>
       </div>
@@ -728,14 +759,14 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
       <div class="ph">
-        <div><div class="ph-t">🏠 Command Dashboard</div><div class="ph-s" id="dash-greeting">Welcome back! Here's your overview.</div></div>
+        <div><div class="ph-t">Command Dashboard</div><div class="ph-s" id="dash-greeting">Welcome back! Here's your overview.</div></div>
         <div class="ph-r">
-          <button class="btn bo" onclick="showPage('myday')">⭐ My Day</button>
-          <button class="btn bp" onclick="openTaskModal()">✨ Add Task</button>
+          <button class="btn bo" onclick="showPage('myday')">My Day</button>
+          <button class="btn bp" onclick="openTaskModal()">Add Task</button>
         </div>
       </div>
       <div class="today-snap" id="today-snap" onclick="showPage('myday')" style="cursor:pointer">
-        <div class="today-snap-ic">📆</div>
+        <svg class="i today-snap-ic" aria-hidden="true"><use href="#i-cal"/></svg>
         <div class="today-snap-tx">
           <div class="today-snap-d" id="today-snap-d">—</div>
           <div class="today-snap-s" id="today-snap-s">Loading…</div>
@@ -744,39 +775,39 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
       </div>
       <div class="kpi">
         <div class="kpi-card tap" onclick="showPage('tasks')">
-          <div class="kpi-hd"><span class="kpi-ic">📋</span><span class="kpi-lbl">Total tasks</span></div>
+          <div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-list"/></svg><span class="kpi-lbl">Total tasks</span></div>
           <div class="kpi-val" id="st-total">0</div>
           <div class="kpi-sub" id="st-total-sub">Nothing yet</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-hd"><span class="kpi-ic">✅</span><span class="kpi-lbl">Completed</span></div>
+          <div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-check"/></svg><span class="kpi-lbl">Completed</span></div>
           <div class="kpi-val" id="st-done">0</div>
           <div class="kpi-sub" id="st-done-sub"><b>0%</b> of all tasks</div>
           <div class="meter"><div class="meter-fill" id="st-done-bar" style="width:0%"></div></div>
         </div>
         <div class="kpi-card tap" onclick="showPage('mytasks')">
-          <div class="kpi-hd"><span class="kpi-ic">⚠️</span><span class="kpi-lbl">Overdue</span></div>
+          <div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-alert"/></svg><span class="kpi-lbl">Overdue</span></div>
           <div class="kpi-val" id="st-ovr">0</div>
           <div class="kpi-sub" id="st-ovr-sub">All on schedule</div>
         </div>
         <div class="kpi-card tap" onclick="showPage('calendar')">
-          <div class="kpi-hd"><span class="kpi-ic">🗓️</span><span class="kpi-lbl">Due this week</span></div>
+          <div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-cal"/></svg><span class="kpi-lbl">Due this week</span></div>
           <div class="kpi-val" id="st-week">0</div>
           <div class="kpi-sub" id="st-week-sub">Next 7 days</div>
         </div>
       </div>
       <div class="crow">
         <div class="ccd">
-          <div class="ct">📊 Priority Distribution</div>
+          <div class="ct">Priority Distribution</div>
           <div id="pri-chart" class="hbar"></div>
         </div>
         <div class="ccd">
-          <div class="ct">🔄 Workflow Pipeline</div>
+          <div class="ct">Workflow Pipeline</div>
           <div id="pipe-chart"></div>
         </div>
       </div>
       <div class="ccd" style="margin-bottom:20px">
-        <div class="ct" style="margin-bottom:12px">🔥 Upcoming Tasks</div>
+        <div class="ct" style="margin-bottom:12px">Upcoming Tasks</div>
         <div id="upcoming-list"></div>
       </div>
     </div>
@@ -785,22 +816,22 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     <div id="page-myday" class="page">
       <div class="ph">
         <div>
-          <div class="ph-t">⭐ My Day · <span id="myday-date" style="font-weight:700;color:var(--p)"></span></div>
+          <div class="ph-t">My Day · <span id="myday-date" style="font-weight:700;color:var(--p)"></span></div>
           <div class="ph-s" id="myday-sub">Live view of what needs your attention right now</div>
         </div>
-        <div class="ph-r"><button class="btn bp" onclick="openTaskModal()">✨ Add Task</button></div>
+        <div class="ph-r"><button class="btn bp" onclick="openTaskModal()">Add Task</button></div>
       </div>
       <div class="kpi">
         <div class="kpi-card">
-          <div class="kpi-hd"><span class="kpi-ic">⚠️</span><span class="kpi-lbl">Overdue</span></div>
+          <div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-alert"/></svg><span class="kpi-lbl">Overdue</span></div>
           <div class="kpi-val" id="md-overdue-count">0</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-hd"><span class="kpi-ic">🎯</span><span class="kpi-lbl">Due today</span></div>
+          <div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-target"/></svg><span class="kpi-lbl">Due today</span></div>
           <div class="kpi-val" id="md-today-count">0</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-hd"><span class="kpi-ic">🔵</span><span class="kpi-lbl">In progress</span></div>
+          <div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-clock"/></svg><span class="kpi-lbl">In progress</span></div>
           <div class="kpi-val" id="md-progress-count">0</div>
         </div>
       </div>
@@ -809,12 +840,12 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 
     <!-- VISIONS -->
     <div id="page-visions" class="page">
-      <div class="ph"><div><div class="ph-t">🎯 Goals & Projects</div><div class="ph-s">Define your goals with a time budget, then break them into projects that auto-balance</div></div></div>
+      <div class="ph"><div><div class="ph-t">Goals & Projects</div><div class="ph-s">Define your goals with a time budget, then break them into projects that auto-balance</div></div></div>
       <!-- First-run guide — auto-hidden once all 3 items exist -->
       <div id="frg-visions"></div>
       <div class="visgrd">
         <div class="ccd">
-          <div class="ct">🌟 1. Goals</div>
+          <div class="ct">1. Goals</div>
           <div style="display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap">
             <input id="vTitle" class="fc" placeholder="Goal title — e.g., Clear CA Final Exam" style="flex:2;min-width:160px">
             <select id="vType" class="fc" style="flex:1;min-width:115px"><option>Short Term</option><option>Medium Term</option><option>Long Term</option></select>
@@ -828,7 +859,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
           <div id="visions-list"></div>
         </div>
         <div class="ccd">
-          <div class="ct">🗂️ 2. Projects</div>
+          <div class="ct">2. Projects</div>
           <div style="display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap">
             <input id="pTitle" class="fc" placeholder="E.g., Revision Strategy" style="flex:1;min-width:130px">
             <select id="pVision" class="fc" style="flex:1;min-width:130px"><option value="">— Link to Goal —</option></select>
@@ -845,13 +876,13 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     <!-- TASKS -->
     <div id="page-tasks" class="page">
       <div class="ph">
-        <div><div class="ph-t">📋 Task Activity</div><div class="ph-s" id="task-count">0 tasks found</div></div>
+        <div><div class="ph-t">Task Activity</div><div class="ph-s" id="task-count">0 tasks found</div></div>
         <div class="ph-r">
           <div class="vtg">
-            <button class="vtb act" id="vt-list"   onclick="setView('list')">📋 List</button>
-            <button class="vtb"     id="vt-kanban" onclick="setView('kanban')">🗂️ Kanban</button>
+            <button class="vtb act" id="vt-list"   onclick="setView('list')"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg> List</button>
+            <button class="vtb"     id="vt-kanban" onclick="setView('kanban')"><svg class="i" aria-hidden="true"><use href="#i-grid"/></svg> Kanban</button>
           </div>
-          <button class="btn bp" onclick="openTaskModal()">✨ Add Task</button>
+          <button class="btn bp" onclick="openTaskModal()">Add Task</button>
         </div>
       </div>
       <div class="fbar">
@@ -892,8 +923,8 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     <!-- MY TASKS -->
     <div id="page-mytasks" class="page">
       <div class="ph">
-        <div><div class="ph-t">📌 My Tasks</div><div class="ph-s">Tasks assigned to you or self-assigned</div></div>
-        <div class="ph-r"><button class="btn bp" onclick="openTaskModal()">✨ Add Task</button></div>
+        <div><div class="ph-t">My Tasks</div><div class="ph-s">Tasks assigned to you or self-assigned</div></div>
+        <div class="ph-r"><button class="btn bp" onclick="openTaskModal()">Add Task</button></div>
       </div>
       <div id="mytasks-body"></div>
     </div>
@@ -901,8 +932,8 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     <!-- NOTIFICATIONS -->
     <div id="page-notifications" class="page">
       <div class="ph">
-        <div><div class="ph-t">🔔 Notifications</div><div class="ph-s">Task assignments, progress updates, and comments</div></div>
-        <div class="ph-r"><button class="btn bo bsm" onclick="markAllNotifRead()">✓ Mark All Read</button></div>
+        <div><div class="ph-t">Notifications</div><div class="ph-s">Task assignments, progress updates, and comments</div></div>
+        <div class="ph-r"><button class="btn bo bsm" onclick="markAllNotifRead()">Mark all read</button></div>
       </div>
       <div id="notifications-body"></div>
     </div>
@@ -922,45 +953,45 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 
     <!-- SETTINGS -->
     <div id="page-settings" class="page">
-      <div class="ph"><div><div class="ph-t">⚙️ Data Management</div><div class="ph-s">Backup, restore, and manage your app data</div></div></div>
+      <div class="ph"><div><div class="ph-t">Data Management</div><div class="ph-s">Backup, restore, and manage your app data</div></div></div>
       <div class="sgrd">
         <!-- Workspace Config — always visible, regardless of mode -->
         <div class="scd" style="grid-column:1/-1;border:1.5px solid rgba(91,110,245,.35);background:rgba(91,110,245,.03)">
-          <h3>🏢 Workspace Configuration</h3>
+          <h3>Workspace Configuration</h3>
           <div id="ws-config-body"></div>
         </div>
         <div class="scd">
-          <h3>📊 Data Overview</h3>
+          <h3>Data Overview</h3>
           <div id="data-overview"></div>
         </div>
         <div class="scd">
-          <h3>💾 Backup Data</h3>
+          <h3>Backup Data</h3>
           <p>Download a complete JSON copy of all your data as a personal backup file.</p>
-          <button class="btn bp" onclick="exportData()">⬇️ Download Backup</button>
+          <button class="btn bp" onclick="exportData()">Download backup</button>
         </div>
         <div class="scd">
-          <h3>⬆️ Restore Data</h3>
+          <h3>Restore Data</h3>
           <p>Restore from a previous JSON backup. Overwrites all current app data.</p>
           <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
-          <button class="btn bo" onclick="document.getElementById('importFile').click()">📂 Choose JSON File</button>
+          <button class="btn bo" onclick="document.getElementById('importFile').click()">Choose JSON file</button>
         </div>
         <div class="scd">
-          <h3>📤 Export to Calendar (.ics)</h3>
+          <h3>Export to Calendar (.ics)</h3>
           <p>One file with every dated task as an event. Import into Google Calendar, Outlook, Apple Calendar — works anywhere.</p>
-          <button class="btn bp" onclick="exportICS()">⬇️ Download .ics</button>
+          <button class="btn bp" onclick="exportICS()">Download .ics</button>
         </div>
         <div class="scd">
-          <h3>📊 Export to Excel (.xlsx)</h3>
+          <h3>Export to Excel (.xlsx)</h3>
           <p>Full data dump — Goals, Projects, Tasks, Comments. All fields included: assignee, progress, deadline with time, tags, hours.</p>
           <button class="btn bp" onclick="exportToExcel()">📥 Download Excel</button>
         </div>
         <div class="scd" style="grid-column:1/-1">
-          <h3>🔗 Google Calendar Sync (OAuth)</h3>
+          <h3>Google Calendar Sync (OAuth)</h3>
           <p style="margin-bottom:10px">Real two-way push to your Google Calendar. Requires a free Google Cloud OAuth client. <strong>Setup (one-time):</strong> 1) <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--p)">console.cloud.google.com → Credentials</a> · 2) Create OAuth client (Web app) · 3) Add this page's origin (e.g. <code>http://localhost</code> or your domain) to authorized JavaScript origins · 4) Paste the Client ID below.</p>
           <div class="fr" style="align-items:flex-end">
             <div class="fg" style="flex:2"><label class="fl">OAuth Client ID</label><input id="gcal-client" class="fc" placeholder="xxxxxxx.apps.googleusercontent.com"></div>
-            <div class="fg"><button class="btn bo" onclick="saveGCalClientId()">💾 Save</button></div>
-            <div class="fg"><button class="btn bp" onclick="gcalConnect()">🔗 Connect</button></div>
+            <div class="fg"><button class="btn bo" onclick="saveGCalClientId()">Save</button></div>
+            <div class="fg"><button class="btn bp" onclick="gcalConnect()">Connect</button></div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
             <span class="gcal-pill" id="gcal-status">⚪ Not Connected</span>
@@ -969,7 +1000,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
           </div>
         </div>
         <div class="scd" style="border:1.5px solid #FECACA">
-          <h3 style="color:var(--err)">🗑️ Danger Zone</h3>
+          <h3 style="color:var(--err)">Danger zone</h3>
           <p>Permanently wipe all goals, projects, and tasks. <strong>Cannot be undone.</strong></p>
           <button class="btn bdr" onclick="confirmAction('Wipe ALL data permanently? This cannot be undone.',resetData)">Factory Reset App</button>
         </div>
@@ -980,7 +1011,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     <div id="page-admin" class="page">
       <div class="ph">
         <div>
-          <div class="ph-t">🛡️ Admin Console</div>
+          <div class="ph-t">Admin Console</div>
           <div class="ph-s" id="admin-subtitle">Manage your workspace, team members and roles</div>
         </div>
         <div class="ph-r" id="admin-ph-r">
@@ -990,15 +1021,15 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
       <div class="admin-grid">
         <!-- Workspace Info -->
         <div class="admin-card">
-          <h3>🏢 Workspace</h3>
+          <h3>Workspace</h3>
           <div id="admin-ws-info"></div>
           <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn bo bsm" onclick="openSwitchModeModal()">⚙️ Change Mode</button>
+            <button class="btn bo bsm" onclick="openSwitchModeModal()">Change mode</button>
           </div>
         </div>
         <!-- Positions Manager -->
         <div class="admin-card" id="admin-positions-card">
-          <h3>📋 Positions <span id="pos-count-badge" class="bdg btd" style="font-size:.7rem"></span></h3>
+          <h3>Positions <span id="pos-count-badge" class="bdg btd" style="font-size:.7rem"></span></h3>
           <div id="positions-list"></div>
           <div style="display:flex;gap:8px;margin-top:12px" id="add-pos-wrap" style="display:none">
             <input id="new-pos-input" class="fc" placeholder="e.g. Senior Analyst" style="flex:1;padding:7px 10px;font-size:.82rem" onkeydown="if(event.key==='Enter')adminAddPosition()">
@@ -1007,12 +1038,12 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
         </div>
         <!-- Team Members -->
         <div class="admin-card" style="grid-column:1/-1">
-          <h3>👥 Team Members <span id="user-count-badge" class="bdg btd" style="font-size:.7rem"></span></h3>
+          <h3>Team Members <span id="user-count-badge" class="bdg btd" style="font-size:.7rem"></span></h3>
           <div id="users-list"></div>
         </div>
         <!-- Invite Codes -->
         <div class="admin-card" style="grid-column:1/-1" id="admin-invites-card">
-          <h3>🔗 Invite Codes</h3>
+          <h3>Invite Codes</h3>
           <div style="font-size:.79rem;color:var(--muted);margin-bottom:12px">Generate a code and share it with the person you want to invite. They use it during Sign Up.</div>
           <div id="invites-list"></div>
           <button class="btn bp bsm" style="margin-top:12px" id="gen-invite-btn" onclick="adminGenerateInvite()">✨ Generate New Invite Code</button>
@@ -1047,7 +1078,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
         </div>
         <div class="mf">
           <button class="btn bo" onclick="closeAddUserModal()">Cancel</button>
-          <button class="btn bp" onclick="saveUser()">💾 Save Member</button>
+          <button class="btn bp" onclick="saveUser()">Save Member</button>
         </div>
       </div>
     </div>
@@ -1056,8 +1087,8 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     <!-- PROFILE -->
     <div id="page-profile" class="page">
       <div class="ph">
-        <div><div class="ph-t">👤 My Profile</div><div class="ph-s">Manage your personal information and preferences</div></div>
-        <div class="ph-r"><button class="btn bp" onclick="openProfileModal()">✏️ Edit Profile</button></div>
+        <div><div class="ph-t">My Profile</div><div class="ph-s">Manage your personal information and preferences</div></div>
+        <div class="ph-r"><button class="btn bp" onclick="openProfileModal()">Edit profile</button></div>
       </div>
 
       <!-- Hero Banner -->
@@ -1065,7 +1096,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
         <div class="prof-hero-inner">
           <div class="prof-av-wrap">
             <div class="prof-av" id="prof-av-big" onclick="openProfileModal()">EX</div>
-            <div class="prof-av-edit" onclick="openProfileModal()" title="Edit profile">✏️</div>
+            <div class="prof-av-edit" onclick="openProfileModal()" title="Edit profile"><svg class="i" aria-hidden="true"><use href="#i-edit"/></svg></div>
           </div>
           <div class="prof-hero-info">
             <div class="prof-name-big" id="prof-name-big">Example</div>
@@ -1081,15 +1112,15 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 
       <!-- Stats -->
       <div class="kpi">
-        <div class="kpi-card"><div class="kpi-hd"><span class="kpi-ic">📋</span><span class="kpi-lbl">Total tasks</span></div><div class="kpi-val" id="ps-total">0</div></div>
-        <div class="kpi-card"><div class="kpi-hd"><span class="kpi-ic">✅</span><span class="kpi-lbl">Completed</span></div><div class="kpi-val" id="ps-done">0</div></div>
-        <div class="kpi-card"><div class="kpi-hd"><span class="kpi-ic">📈</span><span class="kpi-lbl">Success rate</span></div><div class="kpi-val" id="ps-prog">0%</div></div>
+        <div class="kpi-card"><div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-list"/></svg><span class="kpi-lbl">Total tasks</span></div><div class="kpi-val" id="ps-total">0</div></div>
+        <div class="kpi-card"><div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-check"/></svg><span class="kpi-lbl">Completed</span></div><div class="kpi-val" id="ps-done">0</div></div>
+        <div class="kpi-card"><div class="kpi-hd"><svg class="i kpi-ic" aria-hidden="true"><use href="#i-trend"/></svg><span class="kpi-lbl">Success rate</span></div><div class="kpi-val" id="ps-prog">0%</div></div>
       </div>
 
       <!-- Info Cards -->
       <div class="prof-grid">
         <div class="prof-card">
-          <h3>📋 Personal Information</h3>
+          <h3>Personal Information</h3>
           <div class="prof-field">
             <div class="prof-field-lbl">Full Name</div>
             <div class="prof-field-val" id="pf-name">—</div>
@@ -1108,7 +1139,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
           </div>
         </div>
         <div class="prof-card">
-          <h3>💼 Professional Details</h3>
+          <h3>Professional Details</h3>
           <div class="prof-field">
             <div class="prof-field-lbl">Job Title / Role</div>
             <div class="prof-field-val" id="pf-role">—</div>
@@ -1127,7 +1158,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
           </div>
         </div>
         <div class="prof-card" style="grid-column:1/-1">
-          <h3>📝 About Me</h3>
+          <h3>About Me</h3>
           <div id="pf-bio" style="font-size:.86rem;color:var(--muted);line-height:1.7;font-style:italic">No bio added yet. Click "Edit Profile" to tell your story.</div>
         </div>
       </div>
@@ -1182,7 +1213,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     </div>
     <div class="mf">
       <button class="btn bo" onclick="closeProfileModal()">Cancel</button>
-      <button class="btn bp" onclick="saveProfile()">💾 Save Profile</button>
+      <button class="btn bp" onclick="saveProfile()">Save Profile</button>
     </div>
   </div>
 </div>
@@ -1248,7 +1279,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     </div>
     <div class="mf">
       <button class="btn bo" onclick="closeTaskModal()">Cancel</button>
-      <button class="btn bp" onclick="saveTask()">💾 Save Task</button>
+      <button class="btn bp" onclick="saveTask()">Save Task</button>
     </div>
   </div>
 </div>
@@ -1278,7 +1309,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     </div>
     <div class="mf">
       <button class="btn bo" onclick="closeVisionModal()">Cancel</button>
-      <button class="btn bp" onclick="saveVisionEdit()">💾 Save Goal</button>
+      <button class="btn bp" onclick="saveVisionEdit()">Save Goal</button>
     </div>
   </div>
 </div>
@@ -1304,7 +1335,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     </div>
     <div class="mf">
       <button class="btn bo" onclick="closeProjectModal()">Cancel</button>
-      <button class="btn bp" onclick="saveProjectEdit()">💾 Save Project</button>
+      <button class="btn bp" onclick="saveProjectEdit()">Save Project</button>
     </div>
   </div>
 </div>
@@ -1342,7 +1373,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     </div>
     <div class="mf">
       <button class="btn bo bsm" id="vm-gcal-btn" onclick="openGCalLink()">📅 Add to Google Calendar</button>
-      <button class="btn bp bsm" onclick="editFromView()">✏️ Edit Task</button>
+      <button class="btn bp bsm" onclick="editFromView()">Edit task</button>
     </div>
   </div>
 </div>
@@ -1350,7 +1381,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 <!-- CONFIRM -->
 <div id="confirm-overlay" onclick="if(event.target===this)closeConfirm()">
   <div class="cdbox">
-    <h3>⚠️ Confirm Action</h3>
+    <h3>Confirm Action</h3>
     <p id="confirm-msg"></p>
     <div class="cdbs">
       <button class="btn bo bsm" onclick="closeConfirm()">Cancel</button>
@@ -1360,7 +1391,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 </div>
 
 <!-- FLOATING ADD BUTTON (always visible) -->
-<button class="fab" onclick="openTaskModal()" title="Add Task (C)">+</button>
+<button class="fab" onclick="openTaskModal()" title="Add Task (C)"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></button>
 
 <!-- TOASTS -->
 <div id="toasts"></div>
@@ -1660,7 +1691,7 @@ function esc(s){ const d=document.createElement('div');d.textContent=s||'';retur
 ══════════════════════════════════════ */
 function toast(msg, type='success'){
   const colors = {success:'linear-gradient(135deg,#10B981,#06B6D4)', error:'linear-gradient(135deg,#EF4444,#F97316)', info:'linear-gradient(135deg,#5B6EF5,#7C3AED)'};
-  const icons  = {success:'✅', error:'❌', info:'ℹ️'};
+  const icons  = {success:'', error:'', info:''};
   const el = document.createElement('div');
   el.className = 'tw';
   el.style.background = colors[type] || colors.info;
@@ -1840,10 +1871,10 @@ function renderDashboard(){
     const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
     tsd.textContent = `${greeting}, ${(PROF&&PROF.name?PROF.name.split(' ')[0]:'there')} · ${d.toLocaleDateString('en-IN',{weekday:'long', day:'numeric', month:'long'})}`;
     const parts = [];
-    if(overdue)  parts.push(`⚠️ ${overdue} overdue`);
-    if(dueToday) parts.push(`🎯 ${dueToday} due today`);
-    if(inProg)   parts.push(`🔵 ${inProg} in progress`);
-    tss.textContent = parts.length ? parts.join(' · ') : '🎉 You have a clear runway today.';
+    if(overdue)  parts.push(`${overdue} overdue`);
+    if(dueToday) parts.push(`${dueToday} due today`);
+    if(inProg)   parts.push(`${inProg} in progress`);
+    tss.textContent = parts.length ? parts.join(' · ') : 'No pressing deadlines today.';
   }
 
   // ── KPI tiles ──
@@ -1928,7 +1959,7 @@ function renderDashboard(){
       const sc = S_CFG[t.status]||S_CFG.todo;
       const proj = D.projects.find(p => p.id == t.projectId);
       const ovr  = t.deadline && deadlineDate(t.deadline) < today;
-      const meta = [pc.label + ' priority', proj ? '📁 ' + proj.title : null].filter(Boolean).join(' · ');
+      const meta = [pc.label + ' priority', proj ? proj.title : null].filter(Boolean).join(' · ');
       return `<div class="uprow" onclick="viewNotes(${t.id})" style="cursor:pointer">
         <div style="display:flex;align-items:center;gap:9px;min-width:0">
           <div style="width:7px;height:7px;border-radius:50%;background:${pc.dot};flex-shrink:0"></div>
@@ -2149,8 +2180,8 @@ function renderVisionsPage(){
               </div>
             </div>
             <div style="display:flex;gap:5px;flex-shrink:0">
-              <button class="bic" onclick="openVisionModal(${v.id})" title="Edit Goal">✏️</button>
-              <button class="bic bic-red" onclick="delVision(${v.id})" title="Delete">🗑️</button>
+              <button class="bic" onclick="openVisionModal(${v.id})" title="Edit Goal"><svg class="i" aria-hidden="true"><use href="#i-edit"/></svg></button>
+              <button class="bic bic-red" onclick="delVision(${v.id})" title="Delete"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button>
             </div>
           </div>
           ${goalH?`
@@ -2182,8 +2213,8 @@ function renderVisionsPage(){
               <div class="lis">🎯 ${esc(v?.title||'Unlinked')} · ${tc} task${tc!==1?'s':''} · <span class="bdg bhr" style="padding:1px 6px;font-size:.65rem">⏱ ${allotH.toFixed(1)}h${auto?' (auto)':''}</span>${(p.startDate||p.endDate)?` <span class="bdg brv" style="padding:1px 6px;font-size:.65rem">📅 ${p.startDate?fmtDate(p.startDate):'?'} – ${p.endDate?fmtDate(p.endDate):'?'}</span>`:''}</div>
             </div>
             <div style="display:flex;gap:5px;flex-shrink:0">
-              <button class="bic" onclick="openProjectModal(${p.id})" title="Edit Project">✏️</button>
-              <button class="bic bic-red" onclick="delProject(${p.id})" title="Delete">🗑️</button>
+              <button class="bic" onclick="openProjectModal(${p.id})" title="Edit Project"><svg class="i" aria-hidden="true"><use href="#i-edit"/></svg></button>
+              <button class="bic bic-red" onclick="delProject(${p.id})" title="Delete"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button>
             </div>
           </div>
           ${allotH?`<div class="cap-bar"><div style="width:${pct}%"></div></div><div class="cap-meta">${doneH}h done / ${allotH.toFixed(1)}h budget</div>`:''}
@@ -2300,15 +2331,15 @@ function buildTaskCard(t){
         <button class="tcheck ${isDn?'dn':''}" onclick="toggleComplete(${t.id})" title="${isDn?'Mark as To Do':'Mark complete'}">${isDn?'✓':''}</button>
         <div class="tnm" ondblclick="inlineEditTitle(this,${t.id})">${esc(t.title)}</div>
         <span class="tic-grp">
-          <button class="bic" onclick="openTaskModal(${t.id})" title="Edit">✏️</button>
-          <button class="bic bic-red" onclick="deleteTask(${t.id})" title="Delete">🗑️</button>
+          <button class="bic" onclick="openTaskModal(${t.id})" title="Edit"><svg class="i" aria-hidden="true"><use href="#i-edit"/></svg></button>
+          <button class="bic bic-red" onclick="deleteTask(${t.id})" title="Delete"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button>
         </span>
       </div>
       <div class="tmeta">
         <span class="bdg ${pc.cls}">● ${pc.label}</span>
         ${isBlocked?`<span class="blocked-badge">🔒 Blocked</span>`:''}
         ${t.recurrence&&t.recurrence!=='none'?`<span class="rec-badge">🔁 ${t.recurrence}</span>`:''}
-        ${proj?`<span class="bdg btd">📁 ${esc(proj.title)}</span>`:''}
+        ${proj?`<span class="bdg btd">${esc(proj.title)}</span>`:''}
         ${t.deadline?`<span class="bdg ${ovr?'bh':'btd'}" title="${esc(fmtDateTime(t.deadline))}">${ovr?'⚠️ ':''}${esc(relDue(deadlineDate(t.deadline)))}</span>`:''}
         <span class="bdg ${sc.cls}">${sc.label}</span>
         ${(+t.estHours||+t.actualHours)?`<span class="bdg bhr ${hourOver?'over':''}">⏱ ${(+t.actualHours||0)}/${(+t.estHours||0)}h</span>`:''}
@@ -2332,8 +2363,8 @@ function buildTaskCard(t){
           }
           return '';
         })()}
-        <button class="timer-btn ${timerRunning?'running':''}" onclick="toggleTimer(${t.id})">${timerRunning?'⏹ '+elapsed:'▶ Timer'}</button>
-        <button class="btn bo bsm" onclick="viewNotes(${t.id})">📄 Detail</button>
+        <button class="timer-btn ${timerRunning?'running':''}" onclick="toggleTimer(${t.id})">${timerRunning?''+elapsed:'Start timer'}</button>
+        <button class="btn bo bsm" onclick="viewNotes(${t.id})">Details</button>
         <select class="tss" onchange="updateStatus(${t.id},this.value)">
           <option value="todo"        ${t.status==='todo'       ?'selected':''}>To Do</option>
           <option value="assigned"    ${t.status==='assigned'   ?'selected':''}>Assigned</option>
@@ -2358,7 +2389,7 @@ function buildKanbanCard(t){
       ${t.deadline?`<span style="color:${ovr?'var(--err)':'inherit'}">${ovr?'⚠️ ':''}${fmtDateTime(t.deadline)}</span>`:''}
     </div>
     <div style="margin-top:6px;display:flex;justify-content:flex-end" onclick="event.stopPropagation()">
-      <button class="bic" style="font-size:.72rem;padding:4px 8px" onclick="openTaskModal(${t.id})">✏️</button>
+      <button class="bic" style="font-size:.72rem;padding:4px 8px" onclick="openTaskModal(${t.id})"><svg class="i" aria-hidden="true"><use href="#i-edit"/></svg></button>
     </div>
   </div>`;
 }
@@ -2495,7 +2526,7 @@ function openTaskModal(taskId=null, presetDate=null){
   if(taskId){
     const t = D.tasks.find(x => x.id === taskId);
     if(!t) return;
-    document.getElementById('modal-title').textContent = '✏️ Edit Task';
+    document.getElementById('modal-title').textContent = 'Edit task';
     document.getElementById('t-title').value    = t.title;
     document.getElementById('t-priority').value = t.priority;
     document.getElementById('t-status').value   = t.status || 'todo';
@@ -2814,7 +2845,7 @@ function renderSettings(){
             : 'Workspace not configured. Complete profile setup via the Admin Console.'}
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn bp bsm" onclick="showPage('admin')">🛡️ Admin Console</button>
+        <button class="btn bp bsm" onclick="showPage('admin')">Admin console</button>
       </div>`;
   }
   // ── Data overview ──
@@ -2934,7 +2965,7 @@ function renderMyTasks(){
         <div class="mt-meta">
           <span class="bdg ${sc.cls}">${sc.label}</span>
           <span class="bdg ${pc.cls}">● ${pc.label}</span>
-          ${proj?`<span class="bdg btd">📁 ${esc(proj.title)}</span>`:''}
+          ${proj?`<span class="bdg btd">${esc(proj.title)}</span>`:''}
           ${t.deadline?`<span class="bdg ${ovr?'bh':'btd'}">${ovr?'⚠️ ':''}${fmtDateTime(t.deadline)}</span>`:''}
           ${cmtCnt?`<span class="bdg btd">💬 ${cmtCnt}</span>`:''}
         </div>
@@ -2945,7 +2976,7 @@ function renderMyTasks(){
           ${Object.entries(S_CFG).map(([v,c])=>`<option value="${v}"${t.status===v?' selected':''}>${c.label}</option>`).join('')}
         </select>
         <button class="bic" onclick="viewNotes(${t.id})" title="Detail / Comment">📄</button>
-        <button class="bic" onclick="openTaskModal(${t.id})" title="Edit">✏️</button>
+        <button class="bic" onclick="openTaskModal(${t.id})" title="Edit"><svg class="i" aria-hidden="true"><use href="#i-edit"/></svg></button>
       </div>
     </div>`;
   };
@@ -2998,16 +3029,16 @@ function renderNotifications(){
       grp: 2,
       ts: t.assignedAt || 0,
       html: `<div class="notif-card ${isRead?'':'unread'}" id="ncard-${t.id}">
-        <div class="notif-card-title">📌 Task Assigned to You: <strong>${esc(t.title)}</strong></div>
+        <div class="notif-card-title">Assigned to you: <strong>${esc(t.title)}</strong></div>
         <div class="notif-card-sub">
           ${assigner?`By <strong>${esc(assigner.name)}</strong> · `:''}
           Status: <strong>${(S_CFG[t.status]||S_CFG.todo).label}</strong>
           ${t.deadline?` · Due: <strong style="color:${ovr?'var(--err)':'inherit'}">${ovr?'⚠️ ':''}${fmtDateTime(t.deadline)}</strong>`:''}
         </div>
         <div style="display:flex;gap:7px;flex-wrap:wrap">
-          <button class="btn bp bsm" onclick="viewNotes(${t.id});markNotifRead(${t.id})">💬 View &amp; Comment</button>
-          <button class="btn bo bsm" onclick="openTaskModal(${t.id})">✏️ Edit</button>
-          ${!isRead?`<button class="btn bo bsm" onclick="markNotifRead(${t.id})">✓ Mark Read</button>`:''}
+          <button class="btn bp bsm" onclick="viewNotes(${t.id});markNotifRead(${t.id})">View &amp; comment</button>
+          <button class="btn bo bsm" onclick="openTaskModal(${t.id})">Edit</button>
+          ${!isRead?`<button class="btn bo bsm" onclick="markNotifRead(${t.id})">Mark read</button>`:''}
         </div>
         <div class="notif-card-ts">${t.assignedAt?new Date(t.assignedAt).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div>
       </div>`
@@ -3023,14 +3054,14 @@ function renderNotifications(){
       grp: 4,
       ts: t.startedAt || t.acceptedAt || t.assignedAt || 0,
       html: `<div class="notif-card ${isDone?'success':'info'}">
-        <div class="notif-card-title">📊 Task You Assigned: <strong>${esc(t.title)}</strong></div>
+        <div class="notif-card-title">You assigned: <strong>${esc(t.title)}</strong></div>
         <div class="notif-card-sub">
           ${assignee?`To <strong>${esc(assignee.name)}</strong> · `:''}
           Status: <span class="bdg ${sc.cls}" style="display:inline-flex">${sc.label}</span>
           ${t.completedAt?` · Completed ${new Date(t.completedAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}` : ''}
         </div>
         <div style="display:flex;gap:7px;flex-wrap:wrap">
-          <button class="btn bp bsm" onclick="viewNotes(${t.id})">💬 View &amp; Comment</button>
+          <button class="btn bp bsm" onclick="viewNotes(${t.id})">View &amp; comment</button>
         </div>
         <div class="notif-card-ts">${t.assignedAt?new Date(t.assignedAt).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div>
       </div>`
@@ -3043,11 +3074,11 @@ function renderNotifications(){
       grp: 0,
       ts: new Date(deadlineDate(t.deadline)).getTime() || 0,
       html: `<div class="notif-card unread">
-        <div class="notif-card-title">⚠️ Overdue: <strong>${esc(t.title)}</strong></div>
+        <div class="notif-card-title">Overdue: <strong>${esc(t.title)}</strong></div>
         <div class="notif-card-sub">Due <strong style="color:var(--err)" title="${esc(fmtDateTime(t.deadline))}">${esc(relDue(deadlineDate(t.deadline)))}</strong> · Status: ${(S_CFG[t.status]||S_CFG.todo).label}</div>
         <div style="display:flex;gap:7px;flex-wrap:wrap">
-          <button class="btn bp bsm" onclick="toggleComplete(${t.id})">✓ Complete</button>
-          <button class="btn bo bsm" onclick="openTaskModal(${t.id})">✏️ Reschedule</button>
+          <button class="btn bp bsm" onclick="toggleComplete(${t.id})">Complete</button>
+          <button class="btn bo bsm" onclick="openTaskModal(${t.id})">Reschedule</button>
         </div>
       </div>`
     });
@@ -3064,11 +3095,11 @@ function renderNotifications(){
       grp: isToday ? 1 : 3,
       ts: new Date(dd).getTime() || 0,
       html: `<div class="notif-card ${isToday?'unread':'info'}">
-        <div class="notif-card-title">${isToday?'🎯 Due today':'📅 Due soon'}: <strong>${esc(t.title)}</strong></div>
+        <div class="notif-card-title">${isToday?'Due today':'Due soon'}: <strong>${esc(t.title)}</strong></div>
         <div class="notif-card-sub">Due <strong>${esc(relDue(dd))}</strong> · Status: ${(S_CFG[t.status]||S_CFG.todo).label}</div>
         <div style="display:flex;gap:7px;flex-wrap:wrap">
-          <button class="btn bp bsm" onclick="toggleComplete(${t.id})">✓ Complete</button>
-          <button class="btn bo bsm" onclick="viewNotes(${t.id})">💬 Open</button>
+          <button class="btn bp bsm" onclick="toggleComplete(${t.id})">Complete</button>
+          <button class="btn bo bsm" onclick="viewNotes(${t.id})">Open</button>
         </div>
       </div>`
     });
@@ -3082,7 +3113,7 @@ function renderNotifications(){
         grp: 5,
         ts: c.ts || 0,
         html: `<div class="notif-card info">
-          <div class="notif-card-title">💬 Comment on: <strong>${esc(t.title)}</strong></div>
+          <div class="notif-card-title">Comment on: <strong>${esc(t.title)}</strong></div>
           <div class="notif-card-sub"><strong>${esc(c.name||'Someone')}</strong>: ${esc(c.text.length>80?c.text.slice(0,80)+'…':c.text)}</div>
           <div style="display:flex;gap:7px">
             <button class="btn bp bsm" onclick="viewNotes(${t.id})">View Thread</button>
@@ -3099,7 +3130,7 @@ function renderNotifications(){
   }
   // Most urgent group first, then newest within each group
   cards.sort((a,b) => (a.grp||0) - (b.grp||0) || b.ts - a.ts);
-  const GRP = {0:'⚠️ Overdue',1:'🎯 Due today',2:'📌 Assigned to you',3:'📅 Due soon',4:'📊 Progress updates',5:'💬 Comments'};
+  const GRP = {0:'Overdue',1:'Due today',2:'Assigned to you',3:'Due soon',4:'Progress updates',5:'Comments'};
   let out = '', last = null;
   cards.forEach(c => {
     const g = c.grp||0;
@@ -3634,24 +3665,28 @@ function renderMyDay(){
   };
 
   body.innerHTML =
-    buildSection('⚠️ Overdue (Previous Pending)', 'bh', overdue,    'Nothing overdue — well done!') +
-    buildSection('🎯 Due Today',                  'bm', todoToday,  'Nothing scheduled for today.') +
-    buildSection('🔵 In Progress',                'bip', inProg,    'Nothing in motion right now.');
+    buildSection('Overdue', 'bh', overdue,    'Nothing overdue — well done!') +
+    buildSection('Due today',                  'bm', todoToday,  'Nothing scheduled for today.') +
+    buildSection('In progress',                'bip', inProg,    'Nothing in motion right now.');
 }
 
 /* ══════════════════════════════════════
    DARK MODE
 ══════════════════════════════════════ */
+function setThemeIcon(dark){
+  const u = document.querySelector('#dm-btn use');
+  if(u) u.setAttribute('href', dark ? '#i-sun' : '#i-moon');
+}
 function toggleDarkMode(){
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
   localStorage.setItem('tm_theme', isDark ? 'light' : 'dark');
-  document.getElementById('dm-btn').textContent = isDark ? '🌙' : '☀️';
+  setThemeIcon(!isDark);
 }
 function initTheme(){
   const t = localStorage.getItem('tm_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
-  document.getElementById('dm-btn').textContent = t==='dark' ? '☀️' : '🌙';
+  setThemeIcon(t==='dark');
 }
 
 /* ══════════════════════════════════════
@@ -4284,7 +4319,7 @@ function renderAdminPositions(){
   list.innerHTML = _wsPositions.map(p => `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surf2);border-radius:var(--r);border:1px solid var(--bd);margin-bottom:6px">
       <span style="font-size:.84rem;font-weight:600">📋 ${esc(p.name)}</span>
-      ${isAdmin ? `<button class="bic bic-red" onclick="adminDeletePosition('${p.id}')" title="Delete position">🗑️</button>` : ''}
+      ${isAdmin ? `<button class="bic bic-red" onclick="adminDeletePosition('${p.id}')" title="Delete position"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button>` : ''}
     </div>`).join('');
 }
 
@@ -4350,7 +4385,7 @@ function renderAdminInvites(){
           </div>
           <div style="display:flex;gap:6px">
             <button class="btn bo bsm" onclick="copyInviteCode('${i.code}')">📋 Copy</button>
-            <button class="bic bic-red" onclick="adminDeleteInvite('${i.code}')" title="Revoke">🗑️</button>
+            <button class="bic bic-red" onclick="adminDeleteInvite('${i.code}')" title="Revoke"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button>
           </div>
         </div>`;
     } else if(isUsed){
@@ -4621,7 +4656,7 @@ function renderAdmin(){
             </div>
             <div class="urow-meta">${esc(m.email||'')} &nbsp;<span class="role-badge">${esc(m.position||m.role||'')}</span></div>
           </div>
-          ${isAdmin && !m.isAdmin ? `<button class="bic bic-red" onclick="adminRemoveMember('${m.uid}')" title="Remove member">🗑️</button>` : ''}
+          ${isAdmin && !m.isAdmin ? `<button class="bic bic-red" onclick="adminRemoveMember('${m.uid}')" title="Remove member"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button>` : ''}
         </div>`).join('');
     }
   }
