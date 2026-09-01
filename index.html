@@ -126,8 +126,8 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .ttop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:7px}
 .tnm{font-family:var(--ffd);font-size:.86rem;font-weight:700;color:var(--text);flex:1;line-height:1.35}
 .tmeta{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
-.tact{display:flex;gap:5px;align-items:center}
-.tss{flex:1;padding:5px 8px;border:1.5px solid var(--bd);border-radius:7px;font-family:var(--ffb);font-size:.75rem;background:var(--surf);color:var(--text);outline:none;cursor:pointer;min-width:0}
+.tact{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.tss{flex:0 0 auto;width:130px;padding:5px 8px;border:1.5px solid var(--bd);border-radius:7px;font-family:var(--ffb);font-size:.75rem;background:var(--surf);color:var(--text);outline:none;cursor:pointer;min-width:112px;max-width:100%}
 
 /* ── KANBAN ── */
 .kb{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start}
@@ -331,10 +331,12 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 .fab:active{transform:scale(.95)}
 
 /* ── POLISH: smoother task cards & meta ── */
+.tlist{display:flex;flex-direction:column;gap:10px}
 .tcd{transition:transform .2s ease, box-shadow .2s ease}
-.tcd:hover .tact .bic{opacity:1}
-.tact .bic{opacity:.6;transition:opacity .15s}
-.tact .bic:hover{opacity:1}
+.tic-grp{display:flex;gap:4px;flex-shrink:0}
+.tcd:hover .tic-grp .bic{opacity:1}
+.tic-grp .bic{opacity:.55;transition:opacity .15s}
+.tic-grp .bic:hover{opacity:1}
 
 /* ── POLISH: today badge on dashboard ── */
 .today-snap{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(91,110,245,.08),rgba(124,58,237,.08));border:1px solid rgba(91,110,245,.2);border-radius:var(--rl);padding:13px 16px;margin-bottom:18px}
@@ -781,10 +783,19 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
         </div>
         <div class="ph-r"><button class="btn bp" onclick="openTaskModal()">✨ Add Task</button></div>
       </div>
-      <div class="mrow">
-        <div class="mcd mc3"><div class="mic">⚠️</div><div class="mv" id="md-overdue-count">0</div><div class="ml">Overdue</div></div>
-        <div class="mcd mc1"><div class="mic">🎯</div><div class="mv" id="md-today-count">0</div><div class="ml">Due Today</div></div>
-        <div class="mcd mc2"><div class="mic">🔵</div><div class="mv" id="md-progress-count">0</div><div class="ml">In Progress</div></div>
+      <div class="kpi">
+        <div class="kpi-card">
+          <div class="kpi-hd"><span class="kpi-ic">⚠️</span><span class="kpi-lbl">Overdue</span></div>
+          <div class="kpi-val" id="md-overdue-count">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-hd"><span class="kpi-ic">🎯</span><span class="kpi-lbl">Due today</span></div>
+          <div class="kpi-val" id="md-today-count">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-hd"><span class="kpi-ic">🔵</span><span class="kpi-lbl">In progress</span></div>
+          <div class="kpi-val" id="md-progress-count">0</div>
+        </div>
       </div>
       <div id="myday-body"></div>
     </div>
@@ -802,7 +813,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
             <select id="vType" class="fc" style="flex:1;min-width:115px"><option>Short Term</option><option>Medium Term</option><option>Long Term</option></select>
           </div>
           <div style="display:flex;gap:7px;margin-bottom:6px;flex-wrap:wrap">
-            <input id="vHours" class="fc" type="number" min="0" placeholder="Total hours needed (e.g., 240)" style="flex:1;min-width:160px" oninput="updateVisionPreview()">
+            <input id="vHours" class="fc" type="number" min="0" placeholder="Total hours — e.g. 240" style="flex:1;min-width:160px" oninput="updateVisionPreview()">
             <input id="vTarget" class="fc" type="date" placeholder="Target date" style="flex:1;min-width:160px" oninput="updateVisionPreview()" title="Optional target date">
             <button class="btn bp bsm" onclick="addVision()">+ Add Goal</button>
           </div>
@@ -1578,6 +1589,7 @@ function loadData(){
 function migrateData(d){
   d = d || {};
   d.visions  = (d.visions||[]).map(v => ({
+    type:         'Short Term',
     durationMode: 'hours',
     totalHours:   0,
     targetDate:   '',
@@ -2132,10 +2144,10 @@ function renderVisionsPage(){
             <div>
               <div class="lin">${esc(v.title)}</div>
               <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap">
-                <span class="bdg ${v.type==='Long Term'?'bip':v.type==='Medium Term'?'brv':'bdn'}">${v.type}</span>
+                <span class="bdg ${v.type==='Long Term'?'bip':v.type==='Medium Term'?'brv':'bdn'}">${esc(v.type||'Short Term')}</span>
                 <span class="bdg btd">${tc} project${tc!==1?'s':''}</span>
                 <span class="bdg bhr">⏱ ${goalDurationLabel(v)}</span>
-                ${(v.startDate||v.endDate)?`<span class="bdg brv">📅 ${v.startDate?fmtDate(v.startDate):'?'} – ${v.endDate?fmtDate(v.endDate):'?'}</span>`:''}
+                ${(v.startDate||v.endDate)?`<span class="bdg brv">📅 ${v.startDate&&v.endDate?`${fmtDate(v.startDate)} – ${fmtDate(v.endDate)}`:v.startDate?`from ${fmtDate(v.startDate)}`:`until ${fmtDate(v.endDate)}`}</span>`:''}
               </div>
             </div>
             <div style="display:flex;gap:5px;flex-shrink:0">
@@ -2289,13 +2301,17 @@ function buildTaskCard(t){
       <div class="ttop">
         <button class="tcheck ${isDn?'dn':''}" onclick="toggleComplete(${t.id})" title="${isDn?'Mark as To Do':'Mark complete'}">${isDn?'✓':''}</button>
         <div class="tnm" ondblclick="inlineEditTitle(this,${t.id})">${esc(t.title)}</div>
+        <span class="tic-grp">
+          <button class="bic" onclick="openTaskModal(${t.id})" title="Edit">✏️</button>
+          <button class="bic bic-red" onclick="deleteTask(${t.id})" title="Delete">🗑️</button>
+        </span>
+      </div>
+      <div class="tmeta">
         <span class="bdg ${pc.cls}">● ${pc.label}</span>
         ${isBlocked?`<span class="blocked-badge">🔒 Blocked</span>`:''}
         ${t.recurrence&&t.recurrence!=='none'?`<span class="rec-badge">🔁 ${t.recurrence}</span>`:''}
-      </div>
-      <div class="tmeta">
         ${proj?`<span class="bdg btd">📁 ${esc(proj.title)}</span>`:''}
-        ${t.deadline?`<span class="bdg ${ovr?'bh':'btd'}">${ovr?'⚠️ ':''}${fmtDateTime(t.deadline)}</span>`:''}
+        ${t.deadline?`<span class="bdg ${ovr?'bh':'btd'}" title="${esc(fmtDateTime(t.deadline))}">${ovr?'⚠️ ':''}${esc(relDue(deadlineDate(t.deadline)))}</span>`:''}
         <span class="bdg ${sc.cls}">${sc.label}</span>
         ${(+t.estHours||+t.actualHours)?`<span class="bdg bhr ${hourOver?'over':''}">⏱ ${(+t.actualHours||0)}/${(+t.estHours||0)}h</span>`:''}
         ${subTotal?`<span class="bdg btd">☑ ${subDone}/${subTotal}</span>`:''}
@@ -2328,8 +2344,6 @@ function buildTaskCard(t){
           <option value="review"      ${t.status==='review'     ?'selected':''}>In Review</option>
           <option value="done"        ${t.status==='done'       ?'selected':''}>Done</option>
         </select>
-        <button class="bic" onclick="openTaskModal(${t.id})" title="Edit">✏️</button>
-        <button class="bic bic-red" onclick="deleteTask(${t.id})" title="Delete">🗑️</button>
       </div>
     </div>
   </div>`;
@@ -3579,7 +3593,7 @@ function renderMyDay(){
     return `<div class="sec"><div class="sec-h" onclick="this.parentElement.classList.toggle('col')">
       <span class="sec-caret">▼</span><span>${title}</span>
       <span class="sec-meta"><span class="bdg ${badgeClass}">${items.length}</span></span>
-    </div><div class="sec-body tgrd" style="display:grid">${items.map(t=>buildTaskCard(t)).join('')}</div></div>`;
+    </div><div class="sec-body tlist">${items.map(t=>buildTaskCard(t)).join('')}</div></div>`;
   };
 
   body.innerHTML =
