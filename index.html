@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VipinTaskManager Pro</title>
-<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;TaskManager Pro&quot;,&quot;short_name&quot;:&quot;TaskMgr&quot;,&quot;start_url&quot;:&quot;./&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#EEF2FF&quot;,&quot;theme_color&quot;:&quot;#5B6EF5&quot;}">
+<title>Miyee Task Manager Pro</title>
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Miyee Task Manager Pro&quot;,&quot;short_name&quot;:&quot;Miyee Task&quot;,&quot;start_url&quot;:&quot;./&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#EEF2FF&quot;,&quot;theme_color&quot;:&quot;#5B6EF5&quot;}">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%235B6EF5'/><stop offset='1' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><path d='M55 12 L30 56 H46 L44 88 L70 44 H54 Z' fill='white'/></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%235B6EF5'/><stop offset='1' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><path d='M55 12 L30 56 H46 L44 88 L70 44 H54 Z' fill='white'/></svg>">
 <meta name="theme-color" content="#5B6EF5">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="TaskManager Pro">
+<meta name="apple-mobile-web-app-title" content="Miyee Task Manager Pro">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -332,6 +332,12 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 
 /* ── POLISH: smoother task cards & meta ── */
 .tlist{display:flex;flex-direction:column;gap:10px}
+.notif-grp{display:flex;align-items:center;gap:8px;font-family:var(--ffd);font-size:.76rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+.notif-grp:first-child{margin-top:0}
+.ov-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--surf2);border-radius:var(--r);border:1px solid var(--bd);margin-bottom:7px}
+.ov-l{font-size:.81rem;font-weight:600;color:var(--muted)}
+.ov-v{font-family:var(--ffb);font-weight:700;font-size:.95rem;color:var(--text);font-variant-numeric:tabular-nums}
+.notif-grp-n{background:var(--track);color:var(--text);border-radius:var(--rf);padding:1px 8px;font-size:.72rem;font-weight:800;letter-spacing:0}
 .tcd{transition:transform .2s ease, box-shadow .2s ease}
 .tic-grp{display:flex;gap:4px;flex-shrink:0}
 .tcd:hover .tic-grp .bic{opacity:1}
@@ -579,7 +585,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     <div id="ob-s1" class="ob-step">
       <div style="text-align:center;margin-bottom:24px">
         <div style="font-size:2.4rem;margin-bottom:10px">⚡</div>
-        <div style="font-family:var(--ffd);font-size:1.35rem;font-weight:800;color:var(--text)">Welcome to TaskManager Pro</div>
+        <div style="font-family:var(--ffd);font-size:1.35rem;font-weight:800;color:var(--text)">Welcome to Miyee Task Manager Pro</div>
         <div style="color:var(--muted);font-size:.84rem;margin-top:6px">How will you be using this app?</div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px">
@@ -645,7 +651,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
   <button class="menu-btn" id="menu-btn" onclick="toggleNav()" aria-label="Menu">☰</button>
   <div class="logo">
     <div class="logo-ic">⚡</div>
-    <span class="logo-tx">VipinTask<span style="opacity:.75;font-weight:500">Manager</span> Pro</span>
+    <span class="logo-tx">Miyee<span style="opacity:.75;font-weight:500"> Task Manager</span> Pro</span>
   </div>
   <div class="srch">
     <span style="opacity:.65;font-size:.9rem">🔍</span>
@@ -709,8 +715,9 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
     </div>
     <div style="padding:14px 10px 4px;margin-top:auto">
       <div style="font-size:.67rem;color:var(--lt);text-align:center;line-height:1.6">
-        ⚡ <strong style="color:var(--p)">VipinTask</strong>Manager Pro<br>
-        <span style="font-size:.62rem">Powered by Vipin Nair</span>
+        ⚡ <strong style="color:var(--p)">Miyee</strong> Task Manager Pro<br>
+        <span style="font-size:.63rem">Built By Vipin Nair</span><br>
+        <a href="mailto:audit.vipin@gmail.com" style="font-size:.61rem;color:var(--muted);text-decoration:none">audit.vipin@gmail.com</a>
       </div>
     </div>
   </aside>
@@ -1062,7 +1069,7 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
           </div>
           <div class="prof-hero-info">
             <div class="prof-name-big" id="prof-name-big">Example</div>
-            <div class="prof-role-big" id="prof-role-big">Productivity Pro · VipinTaskManager Pro</div>
+            <div class="prof-role-big" id="prof-role-big">Productivity Pro · Miyee Task Manager Pro</div>
             <div class="prof-hero-tags" id="prof-hero-tags">
               <span class="prof-tag">📅 Member since 2024</span>
               <span class="prof-tag" id="prof-tag-tasks">0 Tasks</span>
@@ -1073,19 +1080,10 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
       </div>
 
       <!-- Stats -->
-      <div class="prof-stats">
-        <div class="prof-stat" style="border-top:3px solid var(--p)">
-          <div class="prof-stat-val" id="ps-total">0</div>
-          <div class="prof-stat-lbl">Total Tasks</div>
-        </div>
-        <div class="prof-stat" style="border-top:3px solid #10B981">
-          <div class="prof-stat-val" id="ps-done">0</div>
-          <div class="prof-stat-lbl">Completed</div>
-        </div>
-        <div class="prof-stat" style="border-top:3px solid #F59E0B">
-          <div class="prof-stat-val" id="ps-prog">0%</div>
-          <div class="prof-stat-lbl">Success Rate</div>
-        </div>
+      <div class="kpi">
+        <div class="kpi-card"><div class="kpi-hd"><span class="kpi-ic">📋</span><span class="kpi-lbl">Total tasks</span></div><div class="kpi-val" id="ps-total">0</div></div>
+        <div class="kpi-card"><div class="kpi-hd"><span class="kpi-ic">✅</span><span class="kpi-lbl">Completed</span></div><div class="kpi-val" id="ps-done">0</div></div>
+        <div class="kpi-card"><div class="kpi-hd"><span class="kpi-ic">📈</span><span class="kpi-lbl">Success rate</span></div><div class="kpi-val" id="ps-prog">0%</div></div>
       </div>
 
       <!-- Info Cards -->
@@ -1373,8 +1371,8 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 <div id="login-gate" style="display:flex;position:fixed;inset:0;background:linear-gradient(135deg,#1a1f36 0%,#2d1b69 55%,#1a1f36 100%);z-index:9000;align-items:center;justify-content:center;flex-direction:column">
   <div style="text-align:center;margin-bottom:28px">
     <div style="font-size:3rem;margin-bottom:8px">⚡</div>
-    <div style="font-family:var(--ffd);font-size:1.55rem;font-weight:800;color:#fff;letter-spacing:-.01em">VipinTask<span style="opacity:.7;font-weight:500">Manager</span> Pro</div>
-    <div style="color:rgba(255,255,255,.55);font-size:.82rem;margin-top:5px">Sign in to access your workspace</div>
+    <div style="font-family:var(--ffd);font-size:1.55rem;font-weight:800;color:#fff;letter-spacing:-.01em">Miyee<span style="opacity:.7;font-weight:500"> Task Manager</span> Pro</div>
+    <div style="color:rgba(255,255,255,.72);font-size:.8rem;margin-top:6px;font-weight:600">Built By Vipin Nair</div><div style="margin-top:2px"><a href="mailto:audit.vipin@gmail.com" style="color:rgba(255,255,255,.5);font-size:.72rem;text-decoration:none">audit.vipin@gmail.com</a></div><div style="color:rgba(255,255,255,.45);font-size:.78rem;margin-top:9px">Sign in to access your workspace</div>
   </div>
   <div style="background:#fff;border-radius:var(--rx);width:92%;max-width:400px;padding:28px 26px;box-shadow:0 28px 70px rgba(0,0,0,.45)">
     <div style="font-family:var(--ffd);font-size:1.05rem;font-weight:700;text-align:center;margin-bottom:18px;color:var(--text)" id="gate-title">Sign In</div>
@@ -2824,17 +2822,18 @@ function renderSettings(){
   if(!ov) return;
   const total = D.tasks.length;
   const done  = D.tasks.filter(t=>t.status==='done').length;
-  const rows  = [['Visions',D.visions.length,'var(--pg)'],['Projects',D.projects.length,'linear-gradient(135deg,#F59E0B,#F97316)'],['Total Tasks',total,'linear-gradient(135deg,#3B82F6,#06B6D4)'],['Completed',done,'linear-gradient(135deg,#10B981,#06B6D4)']];
-  ov.innerHTML = rows.map(([l,v,bg])=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--surf2);border-radius:var(--r);border:1px solid var(--bd);margin-bottom:7px">
-      <span style="font-family:var(--ffd);font-weight:600;font-size:.83rem">${l}</span>
-      <span style="font-family:var(--ffd);font-weight:800;font-size:1.05rem;background:${bg};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${v}</span>
-    </div>`).join('');
+  const today_ = todayStr();
+  const overdue = D.tasks.filter(t=>t.status!=='done'&&t.deadline&&deadlineDate(t.deadline)<today_).length;
+  let bytes = 0; try{ bytes = new Blob([JSON.stringify(D)]).size; }catch(e){}
+  const kb = bytes ? (bytes<1024 ? bytes+' B' : (bytes/1024).toFixed(1)+' KB') : '—';
+  const rows  = [['Goals',D.visions.length],['Projects',D.projects.length],['Total tasks',total],['Completed',done],['Overdue',overdue],['Stored data',kb]];
+  ov.innerHTML = rows.map(([l,v])=>`
+    <div class="ov-row"><span class="ov-l">${l}</span><span class="ov-v">${v}</span></div>`).join('');
 }
 function exportData(){
   const a = document.createElement('a');
   a.href = 'data:text/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(D));
-  a.download = 'TaskMasterPro_Backup.json';
+  a.download = `MiyeeTaskManagerPro_Backup_${todayStr()}.json`;
   document.body.appendChild(a); a.click(); a.remove();
   toast('Backup downloaded!');
 }
@@ -2996,6 +2995,7 @@ function renderNotifications(){
     const isRead = (t.readBy||[]).includes(myUid);
     const ovr  = t.deadline && deadlineDate(t.deadline) < today;
     cards.push({
+      grp: 2,
       ts: t.assignedAt || 0,
       html: `<div class="notif-card ${isRead?'':'unread'}" id="ncard-${t.id}">
         <div class="notif-card-title">📌 Task Assigned to You: <strong>${esc(t.title)}</strong></div>
@@ -3020,6 +3020,7 @@ function renderNotifications(){
     const sc = S_CFG[t.status] || S_CFG.todo;
     const isDone = t.status === 'done';
     cards.push({
+      grp: 4,
       ts: t.startedAt || t.acceptedAt || t.assignedAt || 0,
       html: `<div class="notif-card ${isDone?'success':'info'}">
         <div class="notif-card-title">📊 Task You Assigned: <strong>${esc(t.title)}</strong></div>
@@ -3039,21 +3040,46 @@ function renderNotifications(){
   // 3. Overdue tasks
   D.tasks.filter(t => t.status!=='done' && t.deadline && deadlineDate(t.deadline) < today && (!myUid || t.assignedTo===myUid || t.createdBy===myUid || !t.assignedTo)).forEach(t => {
     cards.push({
-      ts: 0,
+      grp: 0,
+      ts: new Date(deadlineDate(t.deadline)).getTime() || 0,
       html: `<div class="notif-card unread">
         <div class="notif-card-title">⚠️ Overdue: <strong>${esc(t.title)}</strong></div>
-        <div class="notif-card-sub">Was due <strong>${fmtDateTime(t.deadline)}</strong> · Status: ${(S_CFG[t.status]||S_CFG.todo).label}</div>
-        <div style="display:flex;gap:7px">
-          <button class="btn bp bsm" onclick="openTaskModal(${t.id})">✏️ Update</button>
+        <div class="notif-card-sub">Due <strong style="color:var(--err)" title="${esc(fmtDateTime(t.deadline))}">${esc(relDue(deadlineDate(t.deadline)))}</strong> · Status: ${(S_CFG[t.status]||S_CFG.todo).label}</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn bp bsm" onclick="toggleComplete(${t.id})">✓ Complete</button>
+          <button class="btn bo bsm" onclick="openTaskModal(${t.id})">✏️ Reschedule</button>
         </div>
       </div>`
     });
+
+  // 3b. Due today / due in the next 3 days — a task manager should warn before
+  // the deadline passes, not only after it has.
+  const soonEnd = new Date(); soonEnd.setDate(soonEnd.getDate()+3);
+  const soonEndS = soonEnd.toISOString().split('T')[0];
+  D.tasks.filter(t => t.status!=='done' && t.deadline && deadlineDate(t.deadline) >= today && deadlineDate(t.deadline) <= soonEndS
+                 && (!myUid || t.assignedTo===myUid || t.createdBy===myUid || !t.assignedTo)).forEach(t => {
+    const dd = deadlineDate(t.deadline);
+    const isToday = dd === today;
+    cards.push({
+      grp: isToday ? 1 : 3,
+      ts: new Date(dd).getTime() || 0,
+      html: `<div class="notif-card ${isToday?'unread':'info'}">
+        <div class="notif-card-title">${isToday?'🎯 Due today':'📅 Due soon'}: <strong>${esc(t.title)}</strong></div>
+        <div class="notif-card-sub">Due <strong>${esc(relDue(dd))}</strong> · Status: ${(S_CFG[t.status]||S_CFG.todo).label}</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn bp bsm" onclick="toggleComplete(${t.id})">✓ Complete</button>
+          <button class="btn bo bsm" onclick="viewNotes(${t.id})">💬 Open</button>
+        </div>
+      </div>`
+    });
+  });
   });
 
   // 4. Recent comments on tasks I own or am assigned to
   D.tasks.filter(t => t.assignedTo === myUid || t.assignedBy === myUid || t.createdBy === myUid).forEach(t => {
     (t.comments||[]).filter(c => c.uid !== myUid).forEach(c => {
       cards.push({
+        grp: 5,
         ts: c.ts || 0,
         html: `<div class="notif-card info">
           <div class="notif-card-title">💬 Comment on: <strong>${esc(t.title)}</strong></div>
@@ -3071,9 +3097,20 @@ function renderNotifications(){
     body.innerHTML = `<div class="notif-empty"><div class="notif-empty-ic">🎉</div><div style="font-weight:700;font-size:1rem">You're all caught up!</div><div style="font-size:.82rem;color:var(--lt);margin-top:6px">Task assignments, status updates, and comments will appear here.</div></div>`;
     return;
   }
-  // Sort newest first
-  cards.sort((a,b) => b.ts - a.ts);
-  body.innerHTML = cards.map(c => c.html).join('');
+  // Most urgent group first, then newest within each group
+  cards.sort((a,b) => (a.grp||0) - (b.grp||0) || b.ts - a.ts);
+  const GRP = {0:'⚠️ Overdue',1:'🎯 Due today',2:'📌 Assigned to you',3:'📅 Due soon',4:'📊 Progress updates',5:'💬 Comments'};
+  let out = '', last = null;
+  cards.forEach(c => {
+    const g = c.grp||0;
+    if(g !== last){
+      const n = cards.filter(x => (x.grp||0) === g).length;
+      out += `<div class="notif-grp">${GRP[g]||''}<span class="notif-grp-n">${n}</span></div>`;
+      last = g;
+    }
+    out += c.html;
+  });
+  body.innerHTML = out;
 }
 
 function markNotifRead(taskId){
@@ -3131,7 +3168,7 @@ function exportToExcel(){
   const overdue = D.tasks.filter(t=>t.status!=='done'&&t.deadline&&deadlineDate(t.deadline)<today).length;
   const prog  = D.tasks.length ? Math.round((done/D.tasks.length)*100) : 0;
   const summaryData = [
-    ['VipinTaskManager Pro — Data Export'],
+    ['Miyee Task Manager Pro — Data Export'],
     ['Generated', new Date().toLocaleString('en-IN')],
     [],
     ['Metric', 'Value'],
@@ -3283,7 +3320,7 @@ function renderProfilePage(){
   const nb = document.getElementById('prof-name-big');
   if(nb) nb.textContent = PROF.name || 'Your Name';
   const rb = document.getElementById('prof-role-big');
-  if(rb) rb.textContent = (PROF.role||'Productivity Pro') + ' · VipinTaskManager Pro';
+  if(rb) rb.textContent = (PROF.role||'Productivity Pro') + ' · Miyee Task Manager Pro';
   const tags = document.getElementById('prof-hero-tags');
   if(tags) tags.innerHTML = `
     <span class="prof-tag">📅 Member since ${PROF.memberSince||new Date().getFullYear()}</span>
@@ -3446,7 +3483,7 @@ function gcalDeepLink(id){
 function exportICS(){
   const dated = D.tasks.filter(t => t.deadline);
   if(!dated.length){ toast('No tasks with deadlines to export.','error'); return; }
-  const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//VipinTaskManager//Pro//EN','CALSCALE:GREGORIAN'];
+  const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//MiyeeTaskManager//Pro//EN','CALSCALE:GREGORIAN'];
   const dtstamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
   dated.forEach(t => {
     const start = icsDateBasic(t.deadline);
@@ -4559,7 +4596,10 @@ function renderAdmin(){
 
   // Team Members list
   const countBadge = document.getElementById('user-count-badge');
-  if(countBadge) countBadge.textContent = isCompany ? members.length + ' member' + (members.length!==1?'s':'') : '';
+  if(countBadge){
+    countBadge.textContent = isCompany ? members.length + ' member' + (members.length!==1?'s':'') : '';
+    countBadge.style.display = countBadge.textContent ? '' : 'none'; // no empty pill in personal mode
+  }
 
   const usersList = document.getElementById('users-list');
   if(usersList){
