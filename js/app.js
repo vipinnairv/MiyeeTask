@@ -59,6 +59,9 @@ function loadData(){
   } catch(e){ console.warn('loadData failed', e); }
   return JSON.parse(JSON.stringify(SEED));
 }
+// `_v` is a write-time stamp for the security rules (see DATA_VERSION); it
+// never lives in D so it can't affect change detection.
+function stripStamp(o){ const { _v, ...rest } = o || {}; return rest; }
 function migrateData(d){
   d = d || {};
   d.visions  = (d.visions||[]).map(v => ({
@@ -68,13 +71,13 @@ function migrateData(d){
     targetDate:   '',
     startDate:    '',
     endDate:      '',
-    ...v
+    ...stripStamp(v)
   }));
   d.projects = (d.projects||[]).map(p => ({
     hoursAllocated: null,
     startDate:      '',
     endDate:        '',
-    ...p
+    ...stripStamp(p)
   }));
   d.tasks    = (d.tasks||[]).map(t => ({
     estHours:    0,
@@ -98,7 +101,7 @@ function migrateData(d){
     // ── Comments & notifications (added Round 7) ──
     comments:    [],     // [{id, uid, name, initials, text, ts}]
     readBy:      [],     // UIDs who have read/acknowledged this task notification
-    ...t
+    ...stripStamp(t)
   }));
   return d;
 }
@@ -1076,7 +1079,9 @@ let _savingTask = false;  // a double-click while images shrink must not add the
 async function saveTask(){
   if(_savingTask) return;
   _savingTask = true;
-  try { await saveTaskInner(); } finally { _savingTask = false; }
+  try { await saveTaskInner(); }
+  catch(e){ console.error('saveTask failed:', e); toast('Could not save the task: ' + (e.message || e), 'error'); }
+  finally { _savingTask = false; }
 }
 async function saveTaskInner(){
   const editId  = editingId;   // captured: image shrinking below is async
@@ -1099,6 +1104,7 @@ async function saveTaskInner(){
   if(!title){
     errEl.textContent = 'Task title is required.';
     errEl.style.display = 'block';
+    errEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
     titleEl.focus();
     if(box){ box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); }
     return;
@@ -1117,6 +1123,8 @@ async function saveTaskInner(){
     if(docBytes(task) <= MAX_DOC_BYTES) return false;
     errEl.textContent = 'This task is too large to sync (' + Math.round(docBytes(task)/1024) + ' KB, limit ' + Math.round(MAX_DOC_BYTES/1024) + ' KB). Remove some images from the notes.';
     errEl.style.display = 'block';
+    errEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    toast('Task not saved — it is too large. Remove some images from the notes.', 'error');
     return true;
   };
   if(editingId){
@@ -3058,6 +3066,11 @@ function fbGetBase(){
    or teammate saving no longer rewrites everybody else's records. */
 const SK_OWNER     = 'tm_data_owner';   // Firestore base path the local copy of D belongs to
 const SYNC_COLS    = ['visions','projects','tasks'];
+// Every goal/project/task written by this version carries _v. firestore.rules
+// rejects writes without it, so a browser still running an older build (which
+// re-uploaded its whole stale copy on every save and reverted other people's
+// edits) can no longer overwrite anything until it is refreshed.
+const DATA_VERSION = 2;
 let _fbSynced      = new Map();
 let _fbReady       = false;   // true once D has been reconciled with Firestore for this session
 let _fbSyncing     = false;
@@ -3287,6 +3300,7 @@ async function fbSyncNow(){
         const ref = _fbFS.doc(base + '/' + k);
         if(d){
           const clean = JSON.parse(JSON.stringify(d)); // Firestore rejects `undefined`
+          clean._v = DATA_VERSION;
           batch.set(ref, clean);
           done.push([k, docHash(d)]);
         } else {

@@ -31,19 +31,32 @@ const db = uid => (uid ? env.authenticatedContext(uid) : env.unauthenticatedCont
 
 test('personal data is private to its owner', async () => {
   await assertSucceeds(getDoc(doc(db('alice'), 'users/alice/tasks/1')));
-  await assertSucceeds(setDoc(doc(db('alice'), 'users/alice/tasks/2'), { id: 2 }));
+  await assertSucceeds(setDoc(doc(db('alice'), 'users/alice/tasks/2'), { id: 2, _v: 2 }));
+  await assertSucceeds(setDoc(doc(db('alice'), 'users/alice/profile/main'), { name: 'A' }));
+  await assertSucceeds(setDoc(doc(db('alice'), 'users/alice/meta/workspace'), { mode: 'personal' }));
+  await assertSucceeds(deleteDoc(doc(db('alice'), 'users/alice/tasks/1')));
   await assertFails(getDoc(doc(db('bob'), 'users/alice/tasks/1')));
-  await assertFails(setDoc(doc(db('bob'), 'users/alice/tasks/3'), { id: 3 }));
+  await assertFails(setDoc(doc(db('bob'), 'users/alice/tasks/3'), { id: 3, _v: 2 }));
   await assertFails(getDoc(doc(db(null), 'users/alice/tasks/1')));
 });
 
 test('workspace tasks: members read/write, outsiders cannot', async () => {
   await assertSucceeds(getDoc(doc(db('mem'), `workspaces/${WS}/tasks/1`)));
-  await assertSucceeds(setDoc(doc(db('mem'), `workspaces/${WS}/tasks/2`), { id: 2 }));
+  await assertSucceeds(setDoc(doc(db('mem'), `workspaces/${WS}/tasks/2`), { id: 2, _v: 2 }));
+  await assertSucceeds(deleteDoc(doc(db('mem'), `workspaces/${WS}/tasks/2`)));
   await assertSucceeds(setDoc(doc(db('mem'), `workspaces/${WS}/meta/workspace`), { orgName: 'Acme' }));
   await assertFails(getDoc(doc(db('stranger'), `workspaces/${WS}/tasks/1`)));
-  await assertFails(setDoc(doc(db('stranger'), `workspaces/${WS}/tasks/9`), { id: 9 }));
+  await assertFails(setDoc(doc(db('stranger'), `workspaces/${WS}/tasks/9`), { id: 9, _v: 2 }));
   await assertFails(setDoc(doc(db('mem'), `workspaces/${WS}/secrets/x`), { a: 1 }));
+});
+
+test('writes from outdated app versions (no _v stamp) are rejected', async () => {
+  // Old builds re-uploaded every record from a stale copy and reverted other people's edits.
+  await assertFails(setDoc(doc(db('mem'), `workspaces/${WS}/tasks/1`), { id: 1, title: 'stale' }));
+  await assertFails(updateDoc(doc(db('mem'), `workspaces/${WS}/tasks/1`), { title: 'stale' }));
+  await assertFails(setDoc(doc(db('alice'), 'users/alice/tasks/1'), { id: 1, title: 'stale' }));
+  await assertFails(setDoc(doc(db('alice'), 'users/alice/visions/5'), { id: 5, _v: 1 }));
+  await assertSucceeds(setDoc(doc(db('mem'), `workspaces/${WS}/tasks/1`), { id: 1, title: 'fresh', _v: 2 }));
 });
 
 test('creating a workspace makes the creator its admin (app batch)', async () => {

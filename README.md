@@ -35,6 +35,8 @@ npx firebase login
 npx firebase deploy --only firestore:rules --project miyeetask
 ```
 
+Goals, projects and tasks must be written by the current app version: it stamps each record with `_v`, and the rules reject writes without it. Older builds re-uploaded their whole, possibly stale, copy on every save and silently reverted other people's edits. A tab still running such a build shows "Sync failed" until it is refreshed. **When changing this stamp, deploy the app first and the rules second.** The other order would reject the live app's own writes.
+
 To restrict sign-in to specific people, add a condition such as `request.auth.token.email in ['you@example.com']` to the rules. The `FB_ALLOWED_EMAILS` list in `js/firebase-config.js` only hides the UI.
 
 ## Tests
