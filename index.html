@@ -1441,7 +1441,18 @@ body{font-family:var(--ffb);background:var(--bg);color:var(--text);min-height:10
 <!-- ═══════════════════════════════════════════════════════════
      LOGIN GATE — full-screen blocker until authenticated
      ═══════════════════════════════════════════════════════════ -->
-<div id="login-gate" style="display:flex;position:fixed;inset:0;background:linear-gradient(135deg,#1a1f36 0%,#2d1b69 55%,#1a1f36 100%);z-index:9000;align-items:center;justify-content:center;flex-direction:column">
+<!-- Shown while Firebase restores the saved session, so a page refresh never
+     flashes the sign-in form at someone who is still signed in. -->
+<div id="boot-splash" style="display:flex;position:fixed;inset:0;background:linear-gradient(135deg,#1a1f36 0%,#2d1b69 55%,#1a1f36 100%);z-index:9100;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:#fff;text-align:center;padding:24px">
+  <div style="font-size:3rem">⚡</div>
+  <div style="font-family:var(--ffd);font-size:1.3rem;font-weight:800">Miyee<span style="opacity:.7;font-weight:500"> Task Manager</span> Pro</div>
+  <div id="boot-msg" style="color:rgba(255,255,255,.7);font-size:.85rem">Loading your workspace…</div>
+  <div id="boot-actions" style="display:none;gap:10px">
+    <button class="btn bp" onclick="location.reload()">Retry</button>
+    <button class="btn" style="background:rgba(255,255,255,.12);color:#fff" onclick="fbSignOut()">Sign out</button>
+  </div>
+</div>
+<div id="login-gate" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#1a1f36 0%,#2d1b69 55%,#1a1f36 100%);z-index:9000;align-items:center;justify-content:center;flex-direction:column">
   <div style="text-align:center;margin-bottom:28px">
     <div style="font-size:3rem;margin-bottom:8px">⚡</div>
     <div style="font-family:var(--ffd);font-size:1.55rem;font-weight:800;color:#fff;letter-spacing:-.01em">Miyee<span style="opacity:.7;font-weight:500"> Task Manager</span> Pro</div>
@@ -1702,7 +1713,10 @@ function migrateData(d){
 }
 function save(){ localStorage.setItem(SK, JSON.stringify(D)); fbScheduleSync(); }
 function newId(){ return Date.now() + Math.floor(Math.random()*999); }
-function todayStr(){ return new Date().toISOString().split('T')[0]; }
+// Local calendar date (YYYY-MM-DD). toISOString() is UTC, which made "today"
+// lag a day behind until 05:30 for users in India.
+function localDateStr(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function todayStr(){ return localDateStr(new Date()); }
 function fmtDate(s){ return s ? s.split('T')[0].split('-').reverse().join('/') : ''; }
 // Extract YYYY-MM-DD from either "YYYY-MM-DD" or "YYYY-MM-DDTHH:mm" (datetime-local)
 function deadlineDate(s){ return s ? s.split('T')[0] : ''; }
@@ -1725,6 +1739,22 @@ function fmtDateTime(s){
   const [datePart, timePart] = s.split('T');
   const d = datePart.split('-').reverse().join('/');
   return timePart ? `${d} ${timePart}` : d;
+}
+/* Rich-text notes are shared between workspace members and rendered as HTML.
+   Strip anything executable so a note can't run script in someone else's session. */
+function sanitizeHTML(html){
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html || '';
+  tpl.content.querySelectorAll('script,style,iframe,object,embed,link,meta,base,form,svg,math').forEach(n => n.remove());
+  tpl.content.querySelectorAll('*').forEach(el => {
+    [...el.attributes].forEach(a => {
+      const n = a.name.toLowerCase(), v = a.value.replace(/[\s\u0000-\u001f]/g,'').toLowerCase();
+      if(n.startsWith('on') || n === 'srcdoc' ||
+         (['href','src','action','formaction','xlink:href'].includes(n) && /^(javascript|vbscript|data:text)/.test(v)))
+        el.removeAttribute(a.name);
+    });
+  });
+  return tpl.innerHTML;
 }
 function esc(s){ const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
 
@@ -1922,7 +1952,7 @@ function renderDashboard(){
   // ── KPI tiles ──
   const active   = total - done;
   const weekEnd  = new Date(); weekEnd.setDate(weekEnd.getDate() + 7);
-  const weekEndS = weekEnd.toISOString().split('T')[0];
+  const weekEndS = localDateStr(weekEnd);
   const dueWeek  = D.tasks.filter(t => t.status !== 'done' && t.deadline &&
                      deadlineDate(t.deadline) >= today && deadlineDate(t.deadline) <= weekEndS).length;
 
@@ -2134,8 +2164,7 @@ function saveProjectEdit(){
 function delVision(id){
   confirmAction('Delete goal? Linked projects will be unlinked.', ()=>{
     D.visions = D.visions.filter(v => v.id !== id);
-    D.projects.forEach(p => { if(p.visionId == id) p.visionId = ''; });
-    _fbPendingDel.visions.add(String(id));
+    D.projects.forEach(p => { if(p.visionId == id) p.visionId = null; });
     save(); renderAll(); toast('Goal deleted.','info');
   });
 }
@@ -2161,7 +2190,6 @@ function delProject(id){
   confirmAction('Delete project? Linked tasks will be unlinked.', ()=>{
     D.projects = D.projects.filter(p => p.id !== id);
     D.tasks.forEach(t => { if(t.projectId == id) t.projectId = null; });
-    _fbPendingDel.projects.add(String(id));
     save(); renderAll(); toast('Project deleted.','info');
   });
 }
@@ -2484,7 +2512,6 @@ function inlineEditTitle(el, id){
 function deleteTask(id){
   confirmAction('Permanently delete this task?', ()=>{
     D.tasks = D.tasks.filter(t => t.id !== id);
-    _fbPendingDel.tasks.add(String(id));
     save(); renderAll(); toast('Task deleted.','info');
   });
 }
@@ -2580,7 +2607,7 @@ function openTaskModal(taskId=null, presetDate=null){
     document.getElementById('t-blocked').value    = (t.blockedBy||[]).join(', ');
     tp.value = t.projectId ? String(t.projectId) : '';
     quillNotes = t.notes || '';
-    if(quillInst) quillInst.root.innerHTML = t.notes || '';
+    if(quillInst) quillInst.root.innerHTML = sanitizeHTML(t.notes);
     if(fb) fb.value = (t.notes||'').replace(/<[^>]+>/g,'');
     renderTagWrap(t.tags||[]);
     if(at) at.value = t.assignedTo || '';
@@ -2707,7 +2734,7 @@ function viewNotes(id){
      ${t.deadline?`<span class="bdg btd">📅 ${fmtDateTime(t.deadline)}</span>`:''}
      ${(+t.estHours||+t.actualHours)?`<span class="bdg bhr">⏱ ${(+t.actualHours||0)}/${(+t.estHours||0)}h</span>`:''}`;
   document.getElementById('vm-content').innerHTML = t.notes
-    ? `<div class="ql-editor" style="background:var(--surf2);border:1px solid var(--bd);border-radius:var(--r);min-height:70px;padding:12px 14px">${t.notes}</div>`
+    ? `<div class="ql-editor" style="background:var(--surf2);border:1px solid var(--bd);border-radius:var(--r);min-height:70px;padding:12px 14px">${sanitizeHTML(t.notes)}</div>`
     : `<div class="emp" style="padding:22px"><div class="empi">📝</div><div class="empt">No Notes</div><div class="emps">Nothing stored for this task.</div></div>`;
   renderSubtasks();
   renderComments();
@@ -2914,13 +2941,28 @@ function importData(input){
   const file = input.files[0]; if(!file) return;
   const r = new FileReader();
   r.onload = e => {
-    try { D = JSON.parse(e.target.result); save(); renderAll(); toast('Data restored!'); }
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if(!parsed || !['visions','projects','tasks'].some(k => Array.isArray(parsed[k]))) throw new Error('shape');
+      if(!canReplaceAllData()) return;
+      D = migrateData(parsed); save(); renderAll(); toast('Data restored!');
+    }
     catch { toast('Invalid file format.','error'); }
   };
   r.readAsText(file);
   input.value = '';
 }
+/* Import / factory reset replace every record, and those changes now reach the
+   cloud. In a team workspace that would wipe everyone's data, so only admins may. */
+function canReplaceAllData(){
+  if(WS_MODE !== 'company') return true;
+  const me = _wsMembers.find(m => m.uid === _fbUser?.uid);
+  if(me && me.isAdmin) return true;
+  toast('Only a workspace admin can restore or reset shared workspace data.','error');
+  return false;
+}
 function resetData(){
+  if(!canReplaceAllData()) return;
   D = JSON.parse(JSON.stringify({visions:[],projects:[],tasks:[]}));
   save(); renderAll();
   showPage('visions');     // take user straight to Goals page
@@ -3128,7 +3170,7 @@ function renderNotifications(){
   // 3b. Due today / due in the next 3 days — a task manager should warn before
   // the deadline passes, not only after it has.
   const soonEnd = new Date(); soonEnd.setDate(soonEnd.getDate()+3);
-  const soonEndS = soonEnd.toISOString().split('T')[0];
+  const soonEndS = localDateStr(soonEnd);
   D.tasks.filter(t => t.status!=='done' && t.deadline && deadlineDate(t.deadline) >= today && deadlineDate(t.deadline) <= soonEndS
                  && (!myUid || t.assignedTo===myUid || t.createdBy===myUid || !t.assignedTo)).forEach(t => {
     const dd = deadlineDate(t.deadline);
@@ -3817,15 +3859,20 @@ function toggleTimer(id){
 ══════════════════════════════════════ */
 function spawnRecurring(t){
   if(!t.deadline) return;
-  const d = new Date(t.deadline+'T00:00:00');
+  // Deadlines come from a datetime-local input ("YYYY-MM-DDTHH:mm"); appending
+  // another "T00:00:00" produced an Invalid Date and toISOString() threw.
+  const [datePart, timePart] = t.deadline.split('T');
+  const d = new Date(datePart + 'T00:00:00');
+  if(isNaN(d)) return;
   if(t.recurrence==='daily')   d.setDate(d.getDate()+1);
   if(t.recurrence==='weekly')  d.setDate(d.getDate()+7);
   if(t.recurrence==='monthly') d.setMonth(d.getMonth()+1);
-  const nextDdl = d.toISOString().split('T')[0];
+  const nextDdl = localDateStr(d) + (timePart ? 'T' + timePart : '');
   D.tasks.push({...t, id:newId(), status:'todo', completedAt:null, deadline:nextDdl,
-    timerStart:null, timerTotal:0, subtasks:[], gcalEventId:null});
+    timerStart:null, timerTotal:0, subtasks:[], gcalEventId:null,
+    comments:[], readBy:[], acceptedAt:null, startedAt:null});
   save();
-  toast(`🔁 Recurring task created for ${nextDdl}`);
+  toast(`🔁 Recurring task created for ${fmtDate(nextDdl)}`);
 }
 
 /* ══════════════════════════════════════
@@ -3840,7 +3887,6 @@ let _fbUser = null;   // Currently authenticated firebase.User (null = signed ou
 /* ── Auth / Sync state ── */
 let _fbAuthMode = 'signin'; // legacy field — gate uses _gateMode; kept for fbDoAuth stub compat
 let _fbSyncTimer = null;    // debounce timer for fbSyncNow
-let _fbPendingDel = { visions: new Set(), projects: new Set(), tasks: new Set() }; // IDs to delete on next sync
 
 /* ── Workspace runtime cache (loaded from Firestore on login) ── */
 let _wsMembers   = [];   // {uid, name, email, position, isAdmin, initials, avatarColor}
@@ -3851,9 +3897,10 @@ let _pendingInviteData = null; // invite doc data held during step-2b of profile
 
 // Called from save() — no-op if Firebase not active
 function fbScheduleSync(){
-  if(!_fbFS || !_fbUser) return;
+  if(!_fbFS || !_fbUser || !_fbReady) return;
   clearTimeout(_fbSyncTimer);
-  _fbSyncTimer = setTimeout(fbSyncNow, 1500);
+  fbSetBadge('saving');
+  _fbSyncTimer = setTimeout(fbSyncNow, 800);
 }
 
 function fbHasConfig(){
@@ -3872,6 +3919,7 @@ function fbHasConfig(){
 function gateShowConnError(msg){
   // Surface a connection problem on the login gate with a Retry action so the
   // user is never left staring at a sign-in form whose button does nothing.
+  bootSplash(false);
   const gate = document.getElementById('login-gate');
   if(gate) gate.style.display = 'flex';
   const err = document.getElementById('gate-err');
@@ -3882,6 +3930,15 @@ function gateShowConnError(msg){
   }
   const btn = document.getElementById('gate-btn');
   if(btn){ btn.disabled = false; }
+}
+
+/** Show/hide the start-up splash. With a message, also offer Retry / Sign out. */
+function bootSplash(show, msg){
+  const el = document.getElementById('boot-splash');
+  if(!el) return;
+  el.style.display = show ? 'flex' : 'none';
+  document.getElementById('boot-msg').textContent = msg || 'Loading your workspace…';
+  document.getElementById('boot-actions').style.display = msg ? 'flex' : 'none';
 }
 
 function fbInit(){
@@ -3906,6 +3963,12 @@ function fbInit(){
       }
       _fbAuth = firebase.auth();
       _fbFS   = firebase.firestore();
+      // Keep the session across reloads and browser restarts (explicit, so a
+      // changed SDK default can never turn a refresh into a sign-out).
+      _fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e => console.warn('setPersistence:', e));
+      // Offline cache: reads work without a connection and writes queue up.
+      try { _fbFS.enablePersistence({ synchronizeTabs: true }).catch(e => console.warn('Firestore offline cache unavailable:', e.code || e)); }
+      catch(e){ console.warn('enablePersistence:', e); }
       _fbAuth.onAuthStateChanged(fbHandleAuthChange);
     } catch(e){
       console.warn('Firebase init failed:', e);
@@ -3927,12 +3990,14 @@ function fbHandleAuthChange(user){
       _fbUser = null;
       const err = document.getElementById('gate-err');
       if(err){ err.textContent = '⛔ Access denied — ' + user.email + ' is not authorised.'; err.style.display = ''; }
+      bootSplash(false);
       document.getElementById('login-gate').style.display = 'flex';
       toast('⛔ Access denied: ' + user.email, 'error');
       return;
     }
-    // ── Hide login gate ───────────────────────────────────────────────────
+    // ── Hide login gate; keep the splash up until the workspace is loaded ──
     document.getElementById('login-gate').style.display = 'none';
+    bootSplash(true);
     // ── Check if profile exists in Firestore ─────────────────────────────
     fbCheckProfile(user);
     // ── Show synced badge ─────────────────────────────────────────────────
@@ -3948,6 +4013,9 @@ function fbHandleAuthChange(user){
     fbAddSignOutBtn();
   } else {
     // ── Not logged in — show full-screen login gate ───────────────────────
+    _fbReady = false; _fbSynced = new Map();
+    clearTimeout(_fbSyncTimer);
+    bootSplash(false);
     document.getElementById('login-gate').style.display = 'flex';
     document.getElementById('profile-wizard').style.display = 'none';
     document.getElementById('fb-sync-badge')?.remove();
@@ -3964,8 +4032,33 @@ function fbAddSignOutBtn(){
   btn.id = 'fb-signout-btn';
   btn.className = 'prof-drop-item';
   btn.innerHTML = '🔓 Sign Out';
-  btn.onclick = () => { firebase.auth().signOut(); closeProfileDrop(); };
+  btn.onclick = () => { closeProfileDrop(); fbSignOut(); };
   sep.parentNode.insertBefore(btn, sep);
+}
+
+/** Sign out after flushing pending changes, then clear this account's task data
+    from the device so the next person to sign in here never sees or uploads it. */
+async function fbSignOut(){
+  const doSignOut = async () => {
+    _fbReady = false;
+    clearTimeout(_fbSyncTimer);
+    const base = _fbUser ? fbGetBase() : null;
+    if(base) localStorage.removeItem(fbSyncedKey(base));
+    [SK, SK_OLD, SK_OWNER, WS_KEY, WS_CUR_KEY, WS_MODE_KEY].forEach(k => localStorage.removeItem(k));
+    D = JSON.parse(JSON.stringify(SEED));
+    WS = { orgName:'', users:[] }; WS_MODE = null; WS_CUR_USER = null; _fbSynced = new Map();
+    try { renderAll(); } catch(e){}
+    if(_fbAuth) await _fbAuth.signOut();
+    else location.reload();
+  };
+  if(_fbReady){
+    try { await fbSyncNow(); } catch(e){}
+    if(fbPendingOps().size){
+      confirmAction('Some changes have not reached the cloud yet (you may be offline). Sign out anyway and discard them?', doSignOut);
+      return;
+    }
+  }
+  doSignOut();
 }
 
 /* ══════════════════════════════════════
@@ -3979,14 +4072,20 @@ async function fbCheckProfile(user){
       _fbProfile = profileDoc.data();
       // Returning user — load their workspace data
       await fbLoadWorkspace(_fbProfile);
+      bootSplash(false);
     } else {
       // New user — show profile wizard
+      bootSplash(false);
       document.getElementById('profile-wizard').style.display = 'flex';
     }
   } catch(e){
     console.warn('Profile check failed:', e);
-    // On error, show wizard so user can set up
-    document.getElementById('profile-wizard').style.display = 'flex';
+    // A network/permission error is NOT "no profile". Showing the set-up
+    // wizard here made returning users look signed out and let them overwrite
+    // their profile, so offer a retry instead.
+    bootSplash(true, navigator.onLine
+      ? '⚠️ Couldn’t load your profile (' + (e.code || e.message || 'error') + ').'
+      : '📡 You appear to be offline. Reconnect and retry.');
   }
 }
 
@@ -4010,7 +4109,6 @@ async function fbLoadWorkspace(profile){
   renderAll();
   updateWorkspaceUI();
   updateHeaderProfile();
-  toast('☁️ Welcome back, ' + (profile.name||'') + '!', 'success');
 }
 
 /* ── Workspace sub-collection loaders ──────────────────────────────────────
@@ -4102,7 +4200,8 @@ async function pwFinishPersonal(){
   let p = JSON.parse(localStorage.getItem('tm_profile')||'{}');
   p.name = name; p.initials = profile.initials; p.email = _fbUser.email;
   localStorage.setItem('tm_profile', JSON.stringify(p));
-  updateWorkspaceUI(); updateHeaderProfile(); renderProfilePage();
+  await fbLoadData();   // links this device's data to the account and starts syncing
+  renderAll(); updateWorkspaceUI(); updateHeaderProfile(); renderProfilePage();
   toast('🚀 Welcome, ' + name + '!', 'success');
 }
 
@@ -4475,13 +4574,12 @@ function acceptTask(taskId){
      Personal:  users/{uid}/{visions|projects|tasks}/{id}
      Company:   workspaces/{wsId}/{visions|projects|tasks}/{id}
    fbGetBase() returns the correct collection root.
-   fbLoadData()  — pulls Firestore → D (runs at login / first load)
-   fbPushAll()   — pushes D → Firestore (first ever login)
-   fbSyncNow()   — debounced write called from save()
+   fbLoadData()  — pulls Firestore → D, re-applying unsynced local edits
+   fbSyncNow()   — debounced write of changed documents, called from save()
 ══════════════════════════════════════ */
 function fbGetBase(){
   if(!_fbUser) return null;
-  if(WS_MODE === 'company' && WS.orgName){
+  if(WS_MODE === 'company' && (WS.wsId || WS.orgName)){
     if(!WS.wsId){
       WS.wsId = WS.orgName.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_' + _fbUser.uid.slice(0,8);
       saveWorkspace();
@@ -4491,26 +4589,129 @@ function fbGetBase(){
   return 'users/' + _fbUser.uid;
 }
 
+/* ── Change tracking ───────────────────────────────────────────────────────
+   _fbSynced maps 'collection/id' → hash of the version last known to be in
+   Firestore. It is persisted per workspace so that edits which never reached
+   the cloud (refresh inside the debounce window, offline, failed sync) are
+   recognised on the next load and merged on top of the cloud copy instead of
+   being overwritten by it. Only changed documents are written, so one device
+   or teammate saving no longer rewrites everybody else's records. */
+const SK_OWNER     = 'tm_data_owner';   // Firestore base path the local copy of D belongs to
+const SYNC_COLS    = ['visions','projects','tasks'];
+let _fbSynced      = new Map();
+let _fbReady       = false;   // true once D has been reconciled with Firestore for this session
+let _fbSyncing     = false;
+let _fbSyncAgain   = false;
+let _fbMetaHash    = null;
+let _fbLastLoadAt  = 0;
+
+function stableStr(o){
+  return JSON.stringify(o, (k, v) =>
+    v && typeof v === 'object' && !Array.isArray(v)
+      ? Object.keys(v).sort().reduce((a, key) => (a[key] = v[key], a), {})
+      : v);
+}
+function hashStr(s){ // cyrb53
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for(let i = 0; i < s.length; i++){
+    const ch = s.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+}
+function docHash(d){ return hashStr(stableStr(d)); }
+function fbSyncedKey(base){ return 'tm_synced::' + base; }
+function fbReadSynced(base){
+  try { return new Map(Object.entries(JSON.parse(localStorage.getItem(fbSyncedKey(base)) || 'null') || {})); }
+  catch(e){ return new Map(); }
+}
+function fbWriteSynced(){
+  const base = fbGetBase();
+  if(!base) return;
+  try { localStorage.setItem(fbSyncedKey(base), JSON.stringify(Object.fromEntries(_fbSynced))); }
+  catch(e){ console.warn('Could not persist sync state:', e); }
+}
+function fbLocalDocs(data){
+  const m = new Map();
+  SYNC_COLS.forEach(c => (data[c] || []).forEach(d => { if(d && d.id != null) m.set(c + '/' + d.id, d); }));
+  return m;
+}
+/** Local changes not yet in Firestore: Map key → doc (set) or null (delete). */
+function fbPendingOps(){
+  const ops = new Map();
+  const local = fbLocalDocs(D);
+  local.forEach((d, k) => { if(_fbSynced.get(k) !== docHash(d)) ops.set(k, d); });
+  _fbSynced.forEach((_, k) => { if(!local.has(k)) ops.set(k, null); });
+  return ops;
+}
+function fbSetBadge(state){
+  const b = document.getElementById('fb-sync-badge');
+  if(!b) return;
+  const S = {
+    synced: ['☁️ Synced',      'rgba(16,185,129,.15)', '#065f46', 'rgba(16,185,129,.3)'],
+    saving: ['⏳ Saving…',      'rgba(59,130,246,.12)', '#1e40af', 'rgba(59,130,246,.3)'],
+    failed: ['⚠️ Not synced',  'rgba(239,68,68,.12)',  '#991b1b', 'rgba(239,68,68,.3)']
+  }[state];
+  if(!S) return;
+  b.innerHTML = S[0]; b.style.background = S[1]; b.style.color = S[2]; b.style.borderColor = S[3];
+  b.dataset.state = state;
+}
+
 async function fbLoadData(){
   if(!_fbFS || !_fbUser) return;
   const base = fbGetBase();
   if(!base) return;
+  _fbReady = false;
   try {
     const [vsSnap, prSnap, tkSnap] = await Promise.all([
       _fbFS.collection(base + '/visions').get(),
       _fbFS.collection(base + '/projects').get(),
       _fbFS.collection(base + '/tasks').get()
     ]);
-    const visions  = vsSnap.docs.map(d => d.data());
-    const projects = prSnap.docs.map(d => d.data());
-    const tasks    = tkSnap.docs.map(d => d.data());
-    if(visions.length || projects.length || tasks.length){
-      D = migrateData({ visions, projects, tasks });
-      localStorage.setItem(SK, JSON.stringify(D));
+    const cloud = migrateData({
+      visions:  vsSnap.docs.map(d => d.data()),
+      projects: prSnap.docs.map(d => d.data()),
+      tasks:    tkSnap.docs.map(d => d.data())
+    });
+    const cloudDocs = fbLocalDocs(cloud);
+    // Read local state only now — after the awaits — so edits made while the
+    // request was in flight are included.
+    const owner     = localStorage.getItem(SK_OWNER);
+    const prevSync  = owner === base ? fbReadSynced(base) : new Map();
+    const localDocs = owner === base ? fbLocalDocs(D) : new Map();
+    const cloudSync = new Map();
+    cloudDocs.forEach((d, k) => cloudSync.set(k, docHash(d)));
+
+    if(!cloudDocs.size && !owner && (D.visions.length || D.projects.length || D.tasks.length)){
+      // One-time migration of data created before this device was linked to
+      // an account: keep it; it is uploaded below as pending changes.
+      _fbSynced = new Map();
     } else {
-      // First ever login — push local data up to Firestore
-      await fbPushAll();
+      // Start from the cloud copy and re-apply local edits that never synced.
+      const merged = { visions: [...cloud.visions], projects: [...cloud.projects], tasks: [...cloud.tasks] };
+      if(prevSync.size){
+        localDocs.forEach((d, k) => {
+          if(prevSync.get(k) === docHash(d)) return;           // unchanged locally
+          const [c] = k.split('/');
+          const i = merged[c].findIndex(x => c + '/' + x.id === k);
+          if(i >= 0) merged[c][i] = d; else merged[c].push(d);
+        });
+        prevSync.forEach((_, k) => {
+          if(localDocs.has(k)) return;                         // deleted locally
+          const [c] = k.split('/');
+          merged[c] = merged[c].filter(x => c + '/' + x.id !== k);
+        });
+      }
+      D = migrateData(merged);
+      _fbSynced = cloudSync;
     }
+    localStorage.setItem(SK, JSON.stringify(D));
+    localStorage.setItem(SK_OWNER, base);
+    fbWriteSynced();
+    _fbReady = true;
+    _fbLastLoadAt = Date.now();
     // Load workspace meta
     try {
       const wsMeta = await _fbFS.doc(base + '/meta/workspace').get();
@@ -4521,72 +4722,83 @@ async function fbLoadData(){
         saveWorkspace();
       }
     } catch(e){ /* meta not set yet — fine */ }
+    _fbMetaHash = docHash(WS);
+    if(fbPendingOps().size) fbSyncNow(); else fbSetBadge('synced');
   } catch(e){
     console.warn('Firestore load error:', e);
-    toast('Sync load failed: ' + e.message, 'error');
+    fbSetBadge('failed');
+    toast('Could not load your cloud data: ' + e.message, 'error');
   }
 }
 
-async function fbPushAll(){
-  if(!_fbFS || !_fbUser) return;
-  const base = fbGetBase();
-  if(!base) return;
-  const all = [
-    ...D.visions.map(v  => ({ c:'visions',  d:v })),
-    ...D.projects.map(p => ({ c:'projects', d:p })),
-    ...D.tasks.map(t    => ({ c:'tasks',    d:t }))
-  ];
-  for(let i = 0; i < all.length; i += 499){
-    const batch = _fbFS.batch();
-    all.slice(i, i + 499).forEach(({ c, d }) =>
-      batch.set(_fbFS.doc(`${base}/${c}/${d.id}`), d)
-    );
-    await batch.commit();
-  }
-  try {
-    await _fbFS.doc(base + '/meta/workspace').set({ ...WS, mode: WS_MODE, updatedAt: Date.now() });
-  } catch(e){ /* ignore */ }
-  toast('☁️ Data pushed to Firebase', 'success');
-}
-
+/** Write pending local changes (only the documents that changed) to Firestore. */
 async function fbSyncNow(){
-  if(!_fbFS || !_fbUser) return;
+  if(!_fbFS || !_fbUser || !_fbReady) return;
   const base = fbGetBase();
   if(!base) return;
+  clearTimeout(_fbSyncTimer);
+  if(_fbSyncing){ _fbSyncAgain = true; return; }
+  _fbSyncing = true;
   try {
-    const all = [
-      ...D.visions.map(v  => ({ c:'visions',  d:v })),
-      ...D.projects.map(p => ({ c:'projects', d:p })),
-      ...D.tasks.map(t    => ({ c:'tasks',    d:t }))
-    ];
-    for(let i = 0; i < all.length || i === 0; i += 499){
+    const ops = [...fbPendingOps()];
+    if(ops.length) fbSetBadge('saving');
+    for(let i = 0; i < ops.length; i += 400){ // Firestore allows 500 writes per batch
       const batch = _fbFS.batch();
-      all.slice(i, i + 499).forEach(({ c, d }) =>
-        batch.set(_fbFS.doc(`${base}/${c}/${d.id}`), d)
-      );
-      // Handle pending deletes in first batch
-      if(i === 0){
-        ['visions','projects','tasks'].forEach(col => {
-          _fbPendingDel[col].forEach(id =>
-            batch.delete(_fbFS.doc(`${base}/${col}/${id}`))
-          );
-          _fbPendingDel[col].clear();
-        });
-      }
+      const done  = [];
+      ops.slice(i, i + 400).forEach(([k, d]) => {
+        const ref = _fbFS.doc(base + '/' + k);
+        if(d){
+          const clean = JSON.parse(JSON.stringify(d)); // Firestore rejects `undefined`
+          batch.set(ref, clean);
+          done.push([k, docHash(d)]);
+        } else {
+          batch.delete(ref);
+          done.push([k, null]);
+        }
+      });
       await batch.commit();
-      if(i + 499 >= all.length) break;
+      done.forEach(([k, h]) => h ? _fbSynced.set(k, h) : _fbSynced.delete(k));
+      fbWriteSynced();
     }
-    // Sync workspace meta
-    await _fbFS.doc(base + '/meta/workspace').set({ ...WS, mode: WS_MODE, updatedAt: Date.now() });
-    // Update sync badge
-    const badge = document.getElementById('fb-sync-badge');
-    if(badge) badge.innerHTML = '🔥 Synced';
+    // Workspace meta only when it actually changed. Members may not be allowed
+    // to write it, so a failure here must not mark the task data as unsynced.
+    const metaHash = docHash(WS);
+    if(metaHash !== _fbMetaHash){
+      try {
+        await _fbFS.doc(base + '/meta/workspace').set(JSON.parse(JSON.stringify({ ...WS, mode: WS_MODE, updatedAt: Date.now() })));
+        _fbMetaHash = metaHash;
+      } catch(e){ console.warn('Workspace meta sync skipped:', e); _fbMetaHash = metaHash; }
+    }
+    fbSetBadge(fbPendingOps().size ? 'saving' : 'synced');
   } catch(e){
     console.warn('Firestore sync error:', e);
-    const badge = document.getElementById('fb-sync-badge');
-    if(badge) badge.innerHTML = '⚠️ Sync failed';
+    fbSetBadge('failed');
+    // Changes stay pending (and survive a reload); try again shortly.
+    clearTimeout(_fbSyncTimer);
+    _fbSyncTimer = setTimeout(fbSyncNow, 15000);
+  } finally {
+    _fbSyncing = false;
+    if(_fbSyncAgain){ _fbSyncAgain = false; fbScheduleSync(); }
   }
 }
+
+/* Flush pending writes when the tab is hidden or closed, pick up changes made
+   on other devices when it comes back, and keep several open tabs in step. */
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'hidden'){ fbSyncNow(); return; }
+  if(_fbReady && Date.now() - _fbLastLoadAt > 60000 && !_fbSyncing){
+    fbLoadData().then(() => { if(_fbReady) renderAll(); });
+  }
+});
+window.addEventListener('pagehide', () => { fbSyncNow(); });
+window.addEventListener('online',   () => { fbScheduleSync(); });
+window.addEventListener('storage', e => {
+  if(e.key === SK && e.newValue){
+    try { D = migrateData(JSON.parse(e.newValue)); renderAll(); } catch(_){}
+  } else if(_fbUser && e.key === fbSyncedKey(fbGetBase())){
+    _fbSynced = fbReadSynced(fbGetBase());
+  }
+});
 
 /* ── Auth UI (legacy stubs — old modal removed, replaced by login-gate) ── */
 // These functions previously drove a modal overlay (#fb-email, #fb-auth-btn, etc.)

@@ -1,4 +1,4 @@
-const CACHE = 'tm-pro-v2';
+const CACHE = 'tm-pro-v3';
 // Relative URLs so the app works whether it's served from the domain root
 // or a sub-path (e.g. GitHub Pages project sites).
 const ASSETS = ['./', './index.html', './manifest.json'];
@@ -21,13 +21,20 @@ self.addEventListener('fetch', e => {
   // Never cache cross-origin calls (Firebase, Google APIs, CDNs) — always go
   // to the network so auth and live data stay correct.
   if(url.origin !== self.location.origin) return;
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      const network = fetch(e.request).then(res => {
-        if(res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
-        return res;
-      }).catch(() => cached);
-      return cached || network;
-    })
-  );
+  const fromNetwork = () => fetch(e.request).then(res => {
+    if(res.ok){ const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
+    return res;
+  });
+  // Pages: network first, so a refresh always gets the latest release (cache-
+  // first kept users on an old build after every deploy). Cache is the
+  // offline fallback.
+  if(e.request.mode === 'navigate'){
+    e.respondWith(fromNetwork().catch(() =>
+      caches.match(e.request).then(r => r || caches.match('./index.html'))));
+    return;
+  }
+  e.respondWith(caches.match(e.request).then(cached => {
+    const network = fromNetwork().catch(() => cached);
+    return cached || network;
+  }));
 });
