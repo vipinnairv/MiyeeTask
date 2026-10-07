@@ -878,6 +878,8 @@
 <div id="profile-wizard" style="display:none;position:fixed;inset:0;background:rgba(15,20,40,.82);z-index:8000;align-items:center;justify-content:center;backdrop-filter:blur(6px)">
   <div style="background:var(--surf);border-radius:var(--r2x);width:92%;max-width:520px;padding:32px;box-shadow:0 24px 60px rgba(15,20,40,.4);animation:mdIn .3s ease;position:relative;max-height:90vh;overflow-y:auto">
 
+    <!-- Shown only when an existing user opens the wizard from "Change mode" -->
+    <button id="pw-cancel" class="bic" style="display:none;position:absolute;top:12px;right:12px" onclick="pwCancel()" title="Cancel">✕</button>
     <!-- Step 1: Name + Workspace type -->
     <div id="pw-s1">
       <div style="text-align:center;margin-bottom:22px">

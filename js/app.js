@@ -2468,6 +2468,7 @@ function fbHandleAuthChange(user){
     bootSplash(false);
     document.getElementById('login-gate').style.display = 'flex';
     document.getElementById('profile-wizard').style.display = 'none';
+    document.getElementById('pw-cancel').style.display = 'none';
     document.getElementById('fb-sync-badge')?.remove();
     document.getElementById('fb-signout-btn')?.remove();
     _wsMembers = []; _wsPositions = []; _wsInvites = []; _fbProfile = null;
@@ -2648,6 +2649,7 @@ async function pwFinishPersonal(){
   localStorage.setItem(WS_MODE_KEY, WS_MODE);
   saveWorkspace();
   document.getElementById('profile-wizard').style.display = 'none';
+  document.getElementById('pw-cancel').style.display = 'none';
   let p = JSON.parse(localStorage.getItem('tm_profile')||'{}');
   p.name = name; p.initials = profile.initials; p.email = _fbUser.email;
   localStorage.setItem('tm_profile', JSON.stringify(p));
@@ -2657,6 +2659,7 @@ async function pwFinishPersonal(){
 }
 
 async function pwCreateCompany(){
+  if(_fbReady) await fbSyncNow();  // upload pending edits before the data space changes
   const name = document.getElementById('pw-name').value.trim();
   const org  = document.getElementById('pw-org').value.trim();
   const pos  = document.getElementById('pw-pos-create').value.trim();
@@ -2706,6 +2709,7 @@ async function pwCreateCompany(){
     p.name = name; p.initials = initials; p.email = _fbUser.email; p.org = org;
     localStorage.setItem('tm_profile', JSON.stringify(p));
     document.getElementById('profile-wizard').style.display = 'none';
+    document.getElementById('pw-cancel').style.display = 'none';
     await fbLoadData();
     renderAll(); updateWorkspaceUI(); updateHeaderProfile(); renderProfilePage();
     toast('🏢 Workspace "' + org + '" created! You\'re the Admin.', 'success');
@@ -2760,6 +2764,7 @@ async function pwValidateInvite(){
 }
 
 async function pwJoinCompany(){
+  if(_fbReady) await fbSyncNow();  // upload pending edits before the data space changes
   if(!_pendingInviteData){ toast('Please validate an invite code first','error'); return; }
   const name  = document.getElementById('pw-name').value.trim();
   const pos   = document.getElementById('pw-pos-join').value;
@@ -2803,6 +2808,7 @@ async function pwJoinCompany(){
     p.name = name; p.initials = initials; p.email = _fbUser.email; p.org = wsName;
     localStorage.setItem('tm_profile', JSON.stringify(p));
     document.getElementById('profile-wizard').style.display = 'none';
+    document.getElementById('pw-cancel').style.display = 'none';
     _pendingInviteData = null;
     await Promise.all([fbLoadMembers(), fbLoadPositions(), fbLoadData()]);
     renderAll(); updateWorkspaceUI(); updateHeaderProfile(); renderProfilePage();
@@ -3101,9 +3107,18 @@ function fbPendingOps(){
   _fbSynced.forEach((_, k) => { if(!local.has(k)) ops.set(k, null); });
   return ops;
 }
-function fbSetBadge(state){
+let _fbLastError = '';
+function fbSetBadge(state, err){
+  if(err) _fbLastError = (err.code ? err.code + ': ' : '') + (err.message || String(err));
+  if(state === 'synced') _fbLastError = '';
   const b = document.getElementById('fb-sync-badge');
   if(!b) return;
+  b.style.cursor = 'pointer';
+  b.title = _fbLastError ? 'Not synced — ' + _fbLastError + ' (tap to retry)' : 'All changes saved to the cloud';
+  b.onclick = () => {
+    if(_fbLastError){ toast('Sync problem: ' + _fbLastError + ' — retrying…', 'error'); _fbReady ? fbSyncNow() : fbLoadData().then(() => { if(_fbReady) renderAll(); }); }
+    else toast('All changes are saved to the cloud.', 'success');
+  };
   const S = {
     synced: ['☁️ Synced',      'rgba(16,185,129,.15)', '#065f46', 'rgba(16,185,129,.3)'],
     saving: ['⏳ Saving…',      'rgba(59,130,246,.12)', '#1e40af', 'rgba(59,130,246,.3)'],
@@ -3114,6 +3129,11 @@ function fbSetBadge(state){
   b.dataset.state = state;
 }
 
+let _fbLoadRetry = null;
+function fbRetryLoad(){
+  if(_fbReady || !_fbUser || !_fbFS) return;
+  fbLoadData().then(() => { if(_fbReady) renderAll(); });
+}
 async function fbLoadData(){
   if(!_fbFS || !_fbUser) return;
   const base = fbGetBase();
@@ -3182,8 +3202,11 @@ async function fbLoadData(){
     if(fbPendingOps().size) fbSyncNow(); else fbSetBadge('synced');
   } catch(e){
     console.warn('Firestore load error:', e);
-    fbSetBadge('failed');
+    fbSetBadge('failed', e);
     toast('Could not load your cloud data: ' + e.message, 'error');
+    // Until the load succeeds nothing can sync, so keep retrying.
+    clearTimeout(_fbLoadRetry);
+    _fbLoadRetry = setTimeout(fbRetryLoad, 15000);
   }
 }
 
@@ -3287,7 +3310,7 @@ async function fbSyncNow(){
     fbSetBadge(fbPendingOps().size ? 'saving' : 'synced');
   } catch(e){
     console.warn('Firestore sync error:', e);
-    fbSetBadge('failed');
+    fbSetBadge('failed', e);
     // Changes stay pending (and survive a reload); try again shortly.
     clearTimeout(_fbSyncTimer);
     _fbSyncTimer = setTimeout(fbSyncNow, 15000);
@@ -3303,7 +3326,7 @@ document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'hidden') fbSyncNow();
 });
 window.addEventListener('pagehide', () => { fbSyncNow(); });
-window.addEventListener('online',   () => { fbScheduleSync(); });
+window.addEventListener('online',   () => { if(_fbReady) fbScheduleSync(); else fbRetryLoad(); });
 window.addEventListener('storage', e => {
   if(e.key === SK && e.newValue){
     try { D = migrateData(JSON.parse(e.newValue)); renderAll(); } catch(_){}
@@ -3505,22 +3528,50 @@ function deleteUser(id){
     toast(`${u.name} removed`, 'info');
   });
 }
+/* Switching mode changes where data lives (users/{uid} vs workspaces/{wsId}).
+   It used to flip the flag without reloading, so the screen kept showing the
+   old space's tasks while edits were written to the new one — after a refresh
+   they appeared lost. Now: flush pending edits, switch, then load the other
+   space. With no team workspace yet, open the wizard to create or join one. */
 function openSwitchModeModal(){
   const newMode = WS_MODE === 'company' ? 'personal' : 'company';
-  confirmAction(`Switch to ${newMode} mode? Your data stays intact.`, async () => {
+  const wsId    = _fbProfile && _fbProfile.wsId;
+  if(newMode === 'company' && !wsId){
+    pwBack();
+    document.getElementById('pw-name').value = (_fbProfile && _fbProfile.name) || '';
+    document.getElementById('pw-cancel').style.display = '';
+    document.getElementById('profile-wizard').style.display = 'flex';
+    toast('Create or join a team workspace to use team mode.', 'info');
+    return;
+  }
+  confirmAction(`Switch to ${newMode} mode? Each mode keeps its own goals, projects and tasks.`, async () => {
+    if(_fbReady){
+      await fbSyncNow();
+      if(fbPendingOps().size){ toast('Some changes have not synced yet. Reconnect, then switch again.', 'error'); return; }
+    }
     WS_MODE = newMode;
     localStorage.setItem(WS_MODE_KEY, WS_MODE);
+    if(newMode === 'company'){ WS.wsId = wsId; WS.orgName = _fbProfile.wsName || WS.orgName; saveWorkspace(); }
     // Persist mode change to Firestore profile so it survives next login
     if(_fbFS && _fbUser){
       try {
         await _fbFS.doc('users/' + _fbUser.uid + '/profile/main').update({ wsMode: newMode });
+        if(_fbProfile) _fbProfile.wsMode = newMode;
       } catch(e){ console.warn('Mode update in Firestore failed:', e); }
     }
+    if(newMode === 'company') await Promise.all([fbLoadMembers(), fbLoadPositions()]);
+    await fbLoadData();
+    renderAll();
     updateWorkspaceUI();
     renderAdmin();
     renderSettings();
     toast(`Switched to ${newMode} mode`, 'info');
   });
+}
+function pwCancel(){
+  pwBack();
+  document.getElementById('pw-cancel').style.display = 'none';
+  document.getElementById('profile-wizard').style.display = 'none';
 }
 
 /* ══════════════════════════════════════

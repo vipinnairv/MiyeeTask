@@ -170,4 +170,44 @@ test('sign-out clears local data; the next account starts clean', async () => {
   assert.equal(await page.evaluate(() => D.tasks.length), 0);
 });
 
+test('Change mode keeps each space\'s data separate and saves to the right one', async () => {
+  // Signed in as c@d.com (personal) from the previous test. Personal → team with no workspace opens the wizard.
+  await page.evaluate(async () => { openTaskModal(); document.getElementById('t-title').value = 'Personal task'; await saveTask(); });
+  await page.evaluate(() => openSwitchModeModal());
+  assert.equal(await page.evaluate(() => document.getElementById('profile-wizard').style.display), 'flex');
+  await page.evaluate(() => pwCancel());
+  // Create a team workspace through the wizard, add a team task.
+  await page.evaluate(async () => {
+    document.getElementById('pw-name').value = 'Other'; document.getElementById('pw-org').value = 'Acme';
+    document.getElementById('pw-pos-create').value = 'CEO'; await pwCreateCompany();
+    openTaskModal(); document.getElementById('t-title').value = 'Team task'; await saveTask();
+  });
+  await wait(1200);
+  assert.deepEqual(await page.evaluate(() => D.tasks.map(t => t.title)), ['Team task']);
+  // Team → personal: shows personal data; an edit there lands in the personal space.
+  await page.evaluate(() => { openSwitchModeModal(); document.getElementById('confirm-ok').click(); });
+  await wait(1200);
+  assert.deepEqual(await page.evaluate(() => D.tasks.map(t => t.title)), ['Personal task']);
+  await editTask('Personal task', 'Personal task edited');
+  await wait(1200);
+  await reload(1800);
+  assert.deepEqual(await page.evaluate(() => [WS_MODE, D.tasks.map(t => t.title)]), ['personal', ['Personal task edited']]);
+  // And back to team.
+  await page.evaluate(() => { openSwitchModeModal(); document.getElementById('confirm-ok').click(); });
+  await wait(1200);
+  assert.deepEqual(await page.evaluate(() => D.tasks.map(t => t.title)), ['Team task']);
+  const cloud = await page.evaluate(() => Object.entries(JSON.parse(localStorage.getItem('__fs'))).filter(([k]) => /\/tasks\//.test(k)).map(([k, v]) => k.split('/')[0] + ':' + v.title).sort());
+  assert.ok(cloud.includes('users:Personal task edited') && cloud.includes('workspaces:Team task'), cloud.join());
+});
+
+test('the sync badge explains a failure when tapped', async () => {
+  await page.evaluate(() => { window.__failCommit = true; });
+  await editTask('Team task', 'Team task 2');
+  await wait(1500);
+  assert.match(await page.evaluate(() => document.getElementById('fb-sync-badge').title), /network/);
+  await page.evaluate(() => { window.__failCommit = false; document.getElementById('fb-sync-badge').click(); });
+  await wait(800);
+  assert.match(await page.evaluate(() => document.getElementById('fb-sync-badge').textContent), /Synced/);
+});
+
 test('no uncaught page errors', () => { assert.deepEqual(errors, []); });
