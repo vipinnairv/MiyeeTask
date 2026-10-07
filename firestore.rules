@@ -14,11 +14,20 @@ service cloud.firestore {
     function isAdmin(wsId) {
       return isMember(wsId) && get(memberPath(wsId, request.auth.uid)).data.isAdmin == true;
     }
+    function isDataCol(col) { return col in ['visions', 'projects', 'tasks']; }
+    // Goals/projects/tasks must be written by the current app version (it adds
+    // _v). Older builds re-uploaded their whole, possibly stale, copy on every
+    // save and silently reverted other people's edits; this shuts them out
+    // until the page is refreshed.
+    function currentClient() { return request.resource.data.get('_v', 0) >= 2; }
 
     // ── Personal space: only the owner ─────────────────────────────────────
-    // users/{uid}/profile/main, users/{uid}/{visions|projects|tasks|meta}/{id}
-    match /users/{uid}/{document=**} {
-      allow read, write: if signedIn() && request.auth.uid == uid;
+    // users/{uid}/profile/main, users/{uid}/meta/workspace,
+    // users/{uid}/{visions|projects|tasks}/{id}
+    match /users/{uid}/{col}/{docId} {
+      allow read, delete: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+                            && (!isDataCol(col) || currentClient());
     }
 
     // ── Team workspaces ────────────────────────────────────────────────────
@@ -58,7 +67,9 @@ service cloud.firestore {
 
       // Shared goals / projects / tasks and workspace meta.
       match /{col}/{docId} {
-        allow read, write: if col in ['visions', 'projects', 'tasks', 'meta'] && isMember(wsId);
+        allow read, delete: if (isDataCol(col) || col == 'meta') && isMember(wsId);
+        allow create, update: if isMember(wsId)
+                              && (col == 'meta' || (isDataCol(col) && currentClient()));
       }
     }
 
