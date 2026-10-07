@@ -1,36 +1,51 @@
-# VIPINTASKMASTERPRO
-Task Management,  Project Management
-Welcome to VipinTaskManager Pro
-VipinTaskManager Pro is a sophisticated, all-in-one productivity hub designed to bridge the gap between high-level goal setting and daily execution. Built with a sleek, modern interface, it empowers users to define long-term Visions, break them into manageable Projects, and track individual Tasks with granular precision.
+# Miyee Task Manager Pro
 
-Featuring dynamic Kanban and List views, an integrated Due Date Calendar, and real-time Time Budgeting, the application ensures you never lose sight of your priorities. With seamless Google Calendar integration, rich-text notes, and automated data backups, VipinTaskManager Pro provides a professional-grade environment to streamline your workflow and achieve your ambitions.
-Advanced Features of VipinTaskManager Pro
-The VipinTaskManager Pro is engineered to provide a comprehensive productivity ecosystem that balances high-level planning with tactical execution. Below are the core pillars of its functionality:
+A goal-based task manager: define **Goals**, break them into **Projects**, and track **Tasks** with time budgets, a Kanban board, a calendar, and Google Calendar / Excel / `.ics` export. Personal use or team workspaces with invite codes, admins and task assignment. Data lives in Firebase (Auth + Firestore) and syncs live across devices.
 
-🎯 Strategic Goal Management
-Vision Mapping: Users can define "Visions"—broad, long-term objectives—and assign them a specific duration mode, such as a total hour budget or a fixed target date.
+## Project layout
 
-Automated Time Budgeting: The system calculates the necessary daily pace based on the remaining hours and the approaching target date to keep you on track.
+| Path | What it is |
+| --- | --- |
+| `index.html` | Page markup (login gate, wizard, pages, modals) |
+| `css/app.css` | All styles |
+| `js/firebase-config.js` | Firebase project config and the Firebase SDK loader |
+| `js/app.js` | Application logic: data model, rendering, sync, workspaces |
+| `sw.js`, `manifest.json` | Offline support / installable PWA |
+| `firestore.rules`, `firebase.json` | Firestore security rules |
+| `tests/` | Browser end-to-end tests and security-rules tests |
 
-Project Hierarchy: Visions can be subdivided into specific Projects, which can either have a fixed hour allocation or use "auto-balancing" to distribute the remaining Vision budget.
+There is no build step. Any static host works (GitHub Pages, Firebase Hosting, …); serve the repository root.
 
-📋 Intelligent Task Tracking
-Flexible Views: Toggle instantly between a structured List View with Asana-style section headers and a Kanban Board for visual workflow management.
+## How sync works
 
-Rich Detail: Each task supports Quill-powered rich text notes, subtask checklists with progress bars, and estimated vs. actual hour tracking.
+* Every change is saved to the browser immediately and uploaded to Firestore within about a second. Only the records that changed are written.
+* Changes made on other devices or by teammates appear live.
+* Edits that could not be uploaded (offline, refresh mid-save) are remembered and uploaded the next time the app runs. They are never overwritten by the older cloud copy.
+* If the same record was changed on two devices before either synced, the newer local edit is kept and the user is told.
 
-One-Click Completion: Interactive checkboxes and status "cycling" buttons allow for rapid updates to task progress.
+## Security rules (important)
 
-📅 Calendar & External Integration
-Built-in Calendar: A native monthly view displays task "pills" colored by priority, allowing for quick date-based additions.
+Login screens and admin-only buttons run in the browser and can be bypassed. **`firestore.rules` is what actually protects the data.** Personal data is visible only to its owner, workspace data only to members, only admins manage positions, invites and members, and joining a workspace needs a valid, unused invite code.
 
-Google Calendar Sync: The app supports a real-time push to Google Calendar via OAuth, as well as a "Deep Link" feature to instantly create calendar events from tasks.
+Deploy them once (and again after any change):
 
-Universal Export: Generate .ics files to import your entire schedule into Outlook, Apple Calendar, or other external platforms.
+```bash
+npm install
+npx firebase login
+npx firebase deploy --only firestore:rules --project miyeetask
+```
 
-👤 Personalization & Security
-Comprehensive Profiles: A dedicated profile page tracks your "Member Since" status, total tasks completed, and personal professional details.
+To restrict sign-in to specific people, add a condition such as `request.auth.token.email in ['you@example.com']` to the rules. The `FB_ALLOWED_EMAILS` list in `js/firebase-config.js` only hides the UI.
 
-Local Data Control: All data is auto-saved locally; users have full control through manual JSON backup exports and "Factory Reset" options to wipe data permanently.
+## Tests
 
-Responsive UI: The interface features a modern aesthetic with a custom "Glassmorphism" header and adaptive layouts for various screen sizes.
+```bash
+npm install
+npm run test:e2e     # the real app in headless Chromium against a fake Firebase
+npm run test:rules   # security rules in the Firestore emulator (needs Java 21)
+```
+
+Both run on every pull request (`.github/workflows/test.yml`).
+
+---
+Built by Vipin Nair · audit.vipin@gmail.com

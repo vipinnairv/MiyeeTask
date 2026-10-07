@@ -1,0 +1,83 @@
+rules_version = '2';
+
+// Security rules for Miyee Task Manager Pro.
+// Everything the browser checks (login, admin-only buttons) can be bypassed;
+// these rules are what actually protect the data. Deploy with:
+//   firebase deploy --only firestore:rules
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function wsPath(wsId) { return /databases/$(database)/documents/workspaces/$(wsId); }
+    function memberPath(wsId, uid) { return /databases/$(database)/documents/workspaces/$(wsId)/members/$(uid); }
+    function isMember(wsId) { return signedIn() && exists(memberPath(wsId, request.auth.uid)); }
+    function isAdmin(wsId) {
+      return isMember(wsId) && get(memberPath(wsId, request.auth.uid)).data.isAdmin == true;
+    }
+
+    // ── Personal space: only the owner ─────────────────────────────────────
+    // users/{uid}/profile/main, users/{uid}/{visions|projects|tasks|meta}/{id}
+    match /users/{uid}/{document=**} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // ── Team workspaces ────────────────────────────────────────────────────
+    match /workspaces/{wsId} {
+      allow read: if isMember(wsId);
+      allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid;
+      allow update, delete: if isAdmin(wsId);
+
+      match /members/{uid} {
+        allow read: if isMember(wsId);
+        // 1) The creator adds themself as admin in the same batch that creates
+        //    the workspace.  2) Anyone else joins as a non-admin, holding an
+        //    active invite for this workspace that the same batch marks used.
+        allow create: if signedIn() && request.auth.uid == uid && request.resource.data.uid == uid && (
+          (request.resource.data.isAdmin == true
+             && !exists(wsPath(wsId))
+             && getAfter(wsPath(wsId)).data.createdBy == request.auth.uid)
+          ||
+          (request.resource.data.isAdmin == false
+             && request.resource.data.inviteCode is string
+             && get(/databases/$(database)/documents/invites/$(request.resource.data.inviteCode)).data.wsId == wsId
+             && get(/databases/$(database)/documents/invites/$(request.resource.data.inviteCode)).data.active == true
+             && getAfter(/databases/$(database)/documents/invites/$(request.resource.data.inviteCode)).data.usedBy.hasAll([request.auth.uid]))
+        );
+        // Members may edit their own card but never promote themselves.
+        allow update: if isAdmin(wsId)
+          || (signedIn() && request.auth.uid == uid
+              && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin', 'uid', 'inviteCode']));
+        allow delete: if isAdmin(wsId) || (signedIn() && request.auth.uid == uid);
+      }
+
+      // Position names are listed to invitees before they become members.
+      match /positions/{posId} {
+        allow read: if signedIn();
+        allow write: if isAdmin(wsId);
+      }
+
+      // Shared goals / projects / tasks and workspace meta.
+      match /{col}/{docId} {
+        allow read, write: if col in ['visions', 'projects', 'tasks', 'meta'] && isMember(wsId);
+      }
+    }
+
+    // ── Invite codes ───────────────────────────────────────────────────────
+    match /invites/{code} {
+      allow get: if signedIn();                                  // validate a typed code
+      allow list: if signedIn() && isAdmin(resource.data.wsId);  // admin's "where wsId ==" query
+      allow create: if signedIn() && isAdmin(request.resource.data.wsId)
+                    && request.resource.data.createdBy == request.auth.uid;
+      allow delete: if signedIn() && isAdmin(resource.data.wsId);
+      allow update: if signedIn() && (
+        isAdmin(resource.data.wsId)
+        // Redeeming: an active code may be marked used by the person joining.
+        || (resource.data.active == true
+            && request.resource.data.active == false
+            && request.resource.data.wsId == resource.data.wsId
+            && request.resource.data.usedBy.hasAll([request.auth.uid])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedBy', 'active', 'usedAt', 'usedByName']))
+      );
+    }
+  }
+}

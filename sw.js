@@ -1,7 +1,7 @@
-const CACHE = 'tm-pro-v3';
+const CACHE = 'tm-pro-v4';
 // Relative URLs so the app works whether it's served from the domain root
 // or a sub-path (e.g. GitHub Pages project sites).
-const ASSETS = ['./', './index.html', './manifest.json'];
+const ASSETS = ['./', './index.html', './manifest.json', './css/app.css', './js/app.js', './js/firebase-config.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(()=>{}));
@@ -25,12 +25,12 @@ self.addEventListener('fetch', e => {
     if(res.ok){ const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
     return res;
   });
-  // Pages: network first, so a refresh always gets the latest release (cache-
-  // first kept users on an old build after every deploy). Cache is the
-  // offline fallback.
-  if(e.request.mode === 'navigate'){
+  // Pages and the app's own code: network first, so a refresh always gets the
+  // latest release (cache-first kept users on an old build after every
+  // deploy). Cache is the offline fallback.
+  if(e.request.mode === 'navigate' || /\.(js|css|json)$/.test(url.pathname)){
     e.respondWith(fromNetwork().catch(() =>
-      caches.match(e.request).then(r => r || caches.match('./index.html'))));
+      caches.match(e.request).then(r => r || (e.request.mode === 'navigate' ? caches.match('./index.html') : Response.error()))));
     return;
   }
   e.respondWith(caches.match(e.request).then(cached => {
